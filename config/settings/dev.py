@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DEBUG = True
 SECRET_KEY = 'dev-secret-key'  # 개발용 임시 키
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # 데이터베이스 (개발용, SQLite 예시)
 DATABASES = {
