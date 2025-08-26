@@ -36,14 +36,14 @@ jobs:
         with:
           python-version: '3.12'
 
-      # pip 캐시
-      - name: Cache pip
+      # uv 캐시
+      - name: Cache uv
         uses: actions/cache@v3
         with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          path: ~/.cache/uv
+          key: ${{ runner.os }}-uv-${{ hashFiles('**/uv.lock') }}
           restore-keys: |
-            ${{ runner.os }}-pip-
+            ${{ runner.os }}-uv-
 
       # uv 설치
       - name: Install uv
@@ -54,10 +54,7 @@ jobs:
 
       # 의존성 설치
       - name: Install dependencies
-        run: |
-          pip install --upgrade pip
-          uv sync --dev-packages
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        run: uv pip install .[dev]
 
       # Lint (Ruff, Black, isort)
       - name: Run Ruff
