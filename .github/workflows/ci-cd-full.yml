@@ -12,18 +12,18 @@ jobs:
 
     services:
       postgres:
-        image: postgres:15-alpine
+        image: postgres:15
         env:
-          POSTGRES_USER: ${{ secrets.DB_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.DB_NAME }}
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: testdb
+        options: >-
+          --health-cmd="pg_isready -U postgres -d testdb"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
         ports:
           - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
 
     steps:
       # 코드 체크아웃
@@ -36,14 +36,14 @@ jobs:
         with:
           python-version: '3.12'
 
-      # pip 캐시
-      - name: Cache pip
+      # uv 캐시
+      - name: Cache uv
         uses: actions/cache@v3
         with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          path: ~/.cache/uv
+          key: ${{ runner.os }}-uv-${{ hashFiles('**/uv.lock') }}
           restore-keys: |
-            ${{ runner.os }}-pip-
+            ${{ runner.os }}-uv-
 
       # uv 설치
       - name: Install uv
@@ -54,10 +54,7 @@ jobs:
 
       # 의존성 설치
       - name: Install dependencies
-        run: |
-          pip install --upgrade pip
-          uv sync --dev-packages
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        run: uv pip install .[dev]
 
       # Lint (Ruff, Black, isort)
       - name: Run Ruff
@@ -72,7 +69,7 @@ jobs:
       # Django 마이그레이션
       - name: Django Migrations
         env:
-          DATABASE_URL: postgres://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@localhost:5432/${{ secrets.DB_NAME }}
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
         run: |
           uv run python manage.py makemigrations
           uv run python manage.py migrate
@@ -80,7 +77,7 @@ jobs:
       # Django Tests + Coverage
       - name: Run Django Tests with Coverage
         env:
-          DATABASE_URL: postgres://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@localhost:5432/${{ secrets.DB_NAME }}
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
         run: |
           uv run coverage run --source='.' manage.py test
           uv run coverage report

@@ -1,29 +1,17 @@
-from .dev import *
+# config/settings/prod.py
 
-# 배포용 설정
+from .base import *
+
+# 배포 환경용 설정
 DEBUG = False
-SECRET_KEY = 'real-production-secret-key'  # 배포용 실제 키
 
-ALLOWED_HOSTS = ['yourdomain.com']  # 실제 도메인
+# 실제 운영에서는 환경 변수에서 SECRET_KEY를 가져오므로, base.py의 설정이 사용됩니다.
+# SECRET_KEY = os.environ.get('SECRET_KEY')
 
-# 데이터베이스 (운영용, 예: PostgreSQL)
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'prod_db',
-        'USER': 'prod_user',
-        'PASSWORD': 'prod_password',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
-}
+ALLOWED_HOSTS = ['your-production-domain.com'] # 실제 서비스 도메인을 입력하세요.
 
 # 추가적인 배포용 설정 예시
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
-
-REST_FRAMEWORK = {
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-}
