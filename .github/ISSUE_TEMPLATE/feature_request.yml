@@ -1,0 +1,28 @@
+name: 🌟 Feature Request
+description: 새로운 기능 제안 템플릿
+title: "[Feature]: "
+labels: [enhancement]
+assignees: []
+
+body:
+  - type: textarea
+    id: feature
+    attributes:
+      label: 제안할 기능
+      description: 추가되면 좋을 기능을 설명해주세요.
+      placeholder: 예) 다크 모드 지원
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: 필요성
+      description: 왜 이 기능이 필요한가요?
+      placeholder: 시각적으로 편안하게 사용하고 싶음
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 대안
+      description: 혹시 다른 해결 방법이 있나요?

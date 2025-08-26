@@ -1,0 +1,38 @@
+name: 🐛 Bug Report
+description: 버그 제보를 위한 템플릿
+title: "[Bug]: "
+labels: [bug]
+assignees: []
+
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: 문제 설명
+      description: 어떤 문제가 발생했는지 간단히 적어주세요.
+      placeholder: 예) 버튼 클릭 시 앱이 종료됨
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 재현 방법
+      description: 버그를 재현하기 위한 단계들을 적어주세요.
+      placeholder: 1. 앱 실행 → 2. 로그인 → 3. 버튼 클릭
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 예상 동작
+      description: 원래 기대한 정상 동작은 무엇인가요?
+      placeholder: 버튼 클릭 시 페이지 이동
+
+  - type: input
+    id: environment
+    attributes:
+      label: 환경 정보
+      description: 사용한 환경 정보를 적어주세요 (OS, 브라우저, 버전 등).
+      placeholder: Windows 11 / Chrome 120
