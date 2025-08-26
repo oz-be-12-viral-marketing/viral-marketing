@@ -1,0 +1,23 @@
+[project]
+name = "viral-marketing"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "django>=5.2.5",
+    "django-restframework>=0.0.1",
+]
+
+[dependency-groups]
+dev = [
+    "drf-spectacular>=0.28.0",
+    "ruff>=0.12.10",
+]
+
+[tool.ruff]
+# 린트할 파일 확장자
+extend-ignore = ["E501"]  # 줄 길이 제한 무시
+line-length = 88          # 최대 줄 길이
+exclude = ["migrations", "venv"]  # 린트에서 제외할 폴더
+select = ["F", "E", "W"]  # 체크할 규칙 종류
