@@ -75,9 +75,6 @@ DATABASES = {
     )
 }
 
-if "DATABASE_URL" in os.environ:
-    DATABASES["default"]["ENGINE"] = "django.db.backends.postgresql"
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
