@@ -22,6 +22,9 @@ dev = [
     "isort>=6.0.1",
 ]
 
+[tool.setuptools]
+packages = ["apps", "config", "core"]
+
 [dependency-groups]
 dev = [
     "pre-commit>=4.3.0",
