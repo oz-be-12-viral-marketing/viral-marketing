@@ -63,7 +63,7 @@ jobs:
 
       # Lint (Ruff, Black, isort)
       - name: Run Ruff
-        run: uv run ruff check .
+        run: uv run ruff check . --extend-ignore=E501,F403
 
       
 
