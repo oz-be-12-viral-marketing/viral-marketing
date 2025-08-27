@@ -1,0 +1,5 @@
+ROLE = [
+    "USER",
+    "STAFF",
+    "ADMIN",
+]
