@@ -70,16 +70,29 @@ jobs:
       # Django 준비 확인
       - name: Wait for DB
         run: |
-          for i in $(seq 1 10); do
-            if pg_isready -h localhost -p 5432 -U postgres -d testdb; then
-              echo "PostgreSQL is ready!"
-              break
-            fi
-            echo "Waiting for PostgreSQL... ($i/10)"
-            sleep 1
-          done
-        env:
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
+          python -c "\
+            import os, time
+            from django.db import connections
+            from django.db.utils import OperationalError
+            os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings.dev')
+            import django
+            django.setup()
+            db_conn = None
+            retries = 0
+            max_retries = 10
+            while not db_conn and retries < max_retries:
+                try:
+                    connections['default'].cursor()
+                    print('PostgreSQL is ready!')
+                    break
+                except OperationalError:
+                    retries += 1
+                    print(f'Waiting for PostgreSQL... ({retries}/{max_retries})')
+                    time.sleep(1)
+            if retries == max_retries:
+                print('PostgreSQL connection failed after multiple attempts.')
+                exit(1)
+          "
 
 
       # Django 마이그레이션
