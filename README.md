@@ -1,6 +1,6 @@
 # viral-marketing
 viral marketing team project
-<img width="3107" height="3840" alt="Mermaid Chart - Create complex, visual diagrams with text  A smarter way of creating diagrams -2025-08-27-042310" src="https://github.com/user-attachments/assets/c78fc0de-967d-4f92-bf62-36cbd0d906d8" />
+<img width="3840" height="3564" alt="Mermaid Chart - Create complex, visual diagrams with text  A smarter way of creating diagrams -2025-08-27-050052" src="https://github.com/user-attachments/assets/2ff215df-804d-4fd2-b10f-1a990a28e531" />
 
 
 ---
