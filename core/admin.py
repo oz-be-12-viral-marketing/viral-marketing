@@ -1,9 +1,13 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
+from django.contrib.admin.sites import NotRegistered
 
 User = get_user_model()
 
-admin.site.unregister(User)
+try:
+    admin.site.unregister(User)
+except NotRegistered:
+    pass
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
