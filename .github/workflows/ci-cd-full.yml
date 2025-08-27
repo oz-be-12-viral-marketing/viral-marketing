@@ -73,11 +73,14 @@ jobs:
 
       - name: Check manage.py commands
         run: uv run python manage.py help
+        env:
+          DJANGO_SETTINGS_MODULE: config.settings.dev
 
       - name: Wait for DB
         run: uv run python manage.py wait_for_db
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
+          DJANGO_SETTINGS_MODULE: config.settings.dev
 
 
       # Django 마이그레이션
