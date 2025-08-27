@@ -68,14 +68,6 @@ jobs:
       
 
       # Django 준비 확인
-      - name: Diagnose wait_for_db import
-        run: uv run python -c "import core.management.commands.wait_for_db"
-
-      - name: Check manage.py commands
-        run: uv run python manage.py help
-        env:
-          DJANGO_SETTINGS_MODULE: config.settings.dev
-
       - name: Wait for DB
         run: uv run python manage.py wait_for_db
         env:
