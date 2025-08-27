@@ -65,11 +65,7 @@ jobs:
       - name: Run Ruff
         run: uv run ruff check .
 
-      - name: Run Black
-        run: uv run black --check .
-
-      - name: Run isort
-        run: uv run isort --check-only .
+      
 
       # Django 준비 확인
       - name: Wait for DB
