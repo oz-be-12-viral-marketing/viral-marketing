@@ -70,11 +70,13 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASES = {
     "default": dj_database_url.config(
-        # `DATABASE_URL` 환경변수가 없을 경우, 기본값으로 SQLite를 사용
         default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
         conn_max_age=600,
     )
 }
+
+if "DATABASE_URL" in os.environ:
+    DATABASES["default"]["ENGINE"] = "django.db.backends.postgresql"
 
 
 # Password validation
