@@ -87,8 +87,8 @@ jobs:
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
         run: |
-          DATABASE_URL=${{ env.DATABASE_URL }} uv run python manage.py makemigrations
-          DATABASE_URL=${{ env.DATABASE_URL }} uv run python manage.py migrate
+          DATABASE_URL=${{ env.DATABASE_URL }} uv run python manage.py makemigrations --settings=config.settings.dev
+          DATABASE_URL=${{ env.DATABASE_URL }} uv run python manage.py migrate --settings=config.settings.dev
 
       # Django Tests + Coverage
       - name: Run Django Tests with Coverage
