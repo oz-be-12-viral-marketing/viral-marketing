@@ -95,7 +95,7 @@ jobs:
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
         run: |
-          uv run coverage run --source='.' manage.py test
+          uv run coverage run --source='.' manage.py test --settings=config.settings.dev
           uv run coverage report
 
   deploy:
