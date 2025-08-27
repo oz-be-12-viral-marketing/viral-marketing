@@ -68,6 +68,9 @@ jobs:
       
 
       # Django 준비 확인
+      - name: Check manage.py commands
+        run: uv run python manage.py help
+
       - name: Wait for DB
         run: uv run python manage.py wait_for_db
         env:
