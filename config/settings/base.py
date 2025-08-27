@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'drf_spectacular', # drf-spectacular 추가
+    'core'
 ]
 
 MIDDLEWARE = [
