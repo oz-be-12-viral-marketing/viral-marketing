@@ -70,7 +70,6 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASES = {
     "default": dj_database_url.config(
-        # `DATABASE_URL` 환경변수가 없을 경우, 기본값으로 SQLite를 사용
         default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
         conn_max_age=600,
     )
@@ -117,6 +116,8 @@ STATIC_URL = "/static/"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+AUTH_USER_MODEL = "core.User"
 
 # DRF Spectacular settings
 REST_FRAMEWORK = {

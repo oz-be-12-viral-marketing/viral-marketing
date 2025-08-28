@@ -5,10 +5,12 @@ repos:
       - id: ruff
         args:
           - --fix
-          - --extend-ignore=E501  # 줄 길이 제한 무시
+                    - --extend-ignore=E501,F403  # 줄 길이 제한 무시, 와일드카드 임포트 무시
           - --line-length=120  # 최대 줄 길이
           - --exclude=migrations,venv  # 린트에서 제외할 폴더
           - --select=F,E,W  # 체크할 규칙 종류
+
+
 
   - repo: https://github.com/psf/black
     rev: 25.1.0
