@@ -16,9 +16,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-default-key-for-dev")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = []
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 DJANGO_APPS = [
     "django.contrib.admin",
@@ -35,13 +37,16 @@ CUSTOM_APPS = [
     "apps.transaction_history",
     "apps.users",
     "apps.notifications",
-    "apps.analytics",
+    "apps.analysis",
 ]
 
 THIRD_PARTY_APPS = [
     "rest_framework",
     "django_filters",
     "drf_spectacular",
+    "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
+    "rest_framework.authtoken",
 ]
 
 # Application definition
@@ -140,5 +145,4 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
         "rest_framework.authentication.TokenAuthentication",
     ),
-    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
 }
