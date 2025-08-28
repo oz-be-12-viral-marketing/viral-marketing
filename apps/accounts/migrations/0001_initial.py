@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("users", "0001_initial"),
+        ("core", "0001_initial"),
     ]
 
     operations = [
@@ -199,7 +199,7 @@ class Migration(migrations.Migration):
                 (
                     "user",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="users.user"
+                        on_delete=django.db.models.deletion.CASCADE, to="core.User"
                     ),
                 ),
             ],

@@ -87,6 +87,8 @@ jobs:
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
         run: |
+          # Explicitly remove the problematic apps/users directory
+          rm -rf apps/users
           DATABASE_URL=${{ env.DATABASE_URL }} uv run python manage.py makemigrations --settings=config.settings.dev
           DATABASE_URL=${{ env.DATABASE_URL }} uv run python manage.py migrate --settings=config.settings.dev
 

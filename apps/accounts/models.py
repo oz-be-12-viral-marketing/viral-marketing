@@ -1,7 +1,7 @@
 from django.db import models
 
 from apps.accounts.choices import ACCOUNT_TYPE, BANK_CODES, CURRENCIES
-from apps.users.models import User
+from core.models import User
 
 
 # Create your models here.
