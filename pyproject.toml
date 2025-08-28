@@ -12,6 +12,10 @@ dependencies = [
     "pre-commit>=4.3.0",
     "psycopg2-binary",
     "django-filter>=24.2",
+    "django-allauth>=0.63.0",
+    "requests>=2.32.3",
+    "PyJWT>=2.8.0",
+    "cryptography>=42.0.8",
 ]
 
 [project.optional-dependencies]

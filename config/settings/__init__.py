@@ -4,6 +4,11 @@ import os
 ENVIRONMENT = os.getenv("DJANGO_ENV", "dev").lower()
 
 if ENVIRONMENT == "prod":
-    from .prod import *
+    from . import prod as current_settings
 else:
-    from .dev import *
+    from . import dev as current_settings
+
+# Copy all settings from the selected environment
+for setting in dir(current_settings):
+    if setting.isupper():  # Only copy uppercase settings
+        globals()[setting] = getattr(current_settings, setting)

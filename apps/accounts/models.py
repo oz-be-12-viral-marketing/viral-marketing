@@ -1,12 +1,12 @@
 from django.db import models
 
 from apps.accounts.choices import ACCOUNT_TYPE, BANK_CODES, CURRENCIES
-from apps.users.models import CustomUser
+from core.models import User
 
 
 # Create your models here.
 class Account(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     account_number = models.CharField(max_length=20, unique=True)
     bank_code = models.CharField(max_length=3, choices=BANK_CODES)
     account_type = models.CharField(max_length=20, choices=ACCOUNT_TYPE)
