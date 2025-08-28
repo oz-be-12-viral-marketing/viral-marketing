@@ -1,5 +1,6 @@
 # config/settings/dev.py
 # 개발 환경용 설정
+from .base import *
 
 DEBUG = True
 

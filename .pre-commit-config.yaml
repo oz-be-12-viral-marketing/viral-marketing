@@ -33,4 +33,4 @@ repos:
     rev: v2.3.1
     hooks:
       - id: autoflake
-        args: ["--in-place", "--remove-unused-variables", "--remove-all-unused-imports", "--ignore=F405"]
+        args: ["--in-place", "--remove-unused-variables", "--recursive"]
