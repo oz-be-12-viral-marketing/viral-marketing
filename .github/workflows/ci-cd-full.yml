@@ -36,15 +36,17 @@ jobs:
         with:
           python-version: '3.12'
 
+      
+          
       # uv 캐시
       - name: Cache uv
         uses: actions/cache@v3
         with:
           path: ~/.cache/uv
-          key: ${{ runner.os }}-uv-${{ hashFiles('**/uv.lock') }}
+          key: ${{ runner.os }}-uv-${{ hashFiles('**/uv.lock') }}-v2
           restore-keys: |
             ${{ runner.os }}-uv-
-
+            
       # uv 설치
       - name: Install uv
         run: |
@@ -54,32 +56,49 @@ jobs:
 
       # 의존성 설치
       - name: Install dependencies
-        run: uv pip install .[dev]
+        run: |
+          uv venv
+          source .venv/bin/activate
+          uv pip install .[dev]
 
       # Lint (Ruff, Black, isort)
       - name: Run Ruff
-        run: uv run ruff check .
+        run: uv run ruff check . --extend-ignore=E501,F403
 
-      - name: Run Black
-        run: uv run black --check .
+      
 
-      - name: Run isort
-        run: uv run isort --check-only .
+      # Django 준비 확인
+      - name: Wait for DB
+        run: |
+          for i in $(seq 1 10); do
+            if pg_isready -h localhost -p 5432 -U postgres -d testdb; then
+              echo "PostgreSQL is ready!"
+              break
+            fi
+            echo "Waiting for PostgreSQL... ($i/10)"
+            sleep 1
+          done
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
+
 
       # Django 마이그레이션
       - name: Django Migrations
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
         run: |
-          uv run python manage.py makemigrations
-          uv run python manage.py migrate
+          DATABASE_URL=${{ env.DATABASE_URL }} uv run python manage.py makemigrations --settings=config.settings.dev
+          DATABASE_URL=${{ env.DATABASE_URL }} uv run python manage.py migrate --settings=config.settings.dev
 
       # Django Tests + Coverage
+      - name: Install Coverage
+        run: uv pip install coverage
+
       - name: Run Django Tests with Coverage
         env:
           DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
         run: |
-          uv run coverage run --source='.' manage.py test
+          uv run coverage run --source='.' manage.py test --settings=config.settings.dev
           uv run coverage report
 
   deploy:

@@ -10,6 +10,7 @@ dependencies = [
     "djangorestframework>=3.15.2",
     "gunicorn",
     "pre-commit>=4.3.0",
+    "psycopg2-binary",
 ]
 
 [project.optional-dependencies]
@@ -20,14 +21,11 @@ dev = [
     "black>=25.1.0",
     "flake8>=7.3.0",
     "isort>=6.0.1",
+    "coverage",
 ]
 
-[tool.ruff]
-# 린트할 파일 확장자
-extend-ignore = ["E501"]  # 줄 길이 제한 무시
-line-length = 88          # 최대 줄 길이
-exclude = ["migrations", "venv"]  # 린트에서 제외할 폴더
-select = ["F", "E", "W"]  # 체크할 규칙 종류
+[tool.setuptools]
+packages = ["apps", "config", "core"]
 
 [dependency-groups]
 dev = [
