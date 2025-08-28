@@ -4,6 +4,6 @@ import os
 ENVIRONMENT = os.getenv("DJANGO_ENV", "dev").lower()
 
 if ENVIRONMENT == "prod":
-    pass
+    from .prod import *
 else:
-    pass
+    from .dev import *

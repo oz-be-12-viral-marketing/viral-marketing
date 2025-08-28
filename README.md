@@ -87,3 +87,8 @@ viral marketing team project
 * `users`와 `analysis`: **1:N** (한 명의 사용자에 대해 여러 분석 데이터를 생성)
 
 `DECIMAL` 타입의 정밀도를 명시(`DECIMAL(19, 4)`)하고, 화폐 단위를 추가하여 재무 관련 데이터의 정확도 향상. 또한, 역할 필드를 통합(`role`), 시간 필드명을 더 직관적으로 변경(`last_logged_in_at`), 소프트 삭제를 위한 필드(`deleted_at`)를 추가.
+
+
+# CI Test
+=======
+
