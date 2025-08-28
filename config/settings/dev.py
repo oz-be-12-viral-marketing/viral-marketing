@@ -7,6 +7,8 @@ SECRET_KEY = "django-insecure-development-key"
 
 ALLOWED_HOSTS = ["*"]
 
+ROOT_URLCONF = "config.urls"
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",

@@ -5,6 +5,8 @@ DEBUG = False
 
 ALLOWED_HOSTS = ["your-production-domain.com"]
 
+ROOT_URLCONF = "config.urls"
+
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 SECURE_BROWSER_XSS_FILTER = True
