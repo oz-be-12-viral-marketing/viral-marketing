@@ -1,4 +1,4 @@
-from .base import *
+from . import base
 
 # 개발 환경용 설정
 DEBUG = True
@@ -17,3 +17,8 @@ ALLOWED_HOSTS = ["*"]
 #         "PORT": "5432",
 #     }
 # }
+
+# Copy all settings from base.py
+for setting in dir(base):
+    if setting.isupper():  # Only copy uppercase settings
+        globals()[setting] = getattr(base, setting)
