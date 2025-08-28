@@ -79,13 +79,13 @@ jobs:
             sleep 1
           done
         env:
-          DATABASE_URL: postgres://postgres:postgres@db:5432/testdb
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
 
 
       # Django 마이그레이션
       - name: Django Migrations
         env:
-          DATABASE_URL: postgres://postgres:postgres@db:5432/testdb
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
         run: |
           # Explicitly remove the problematic apps/users directory
           rm -rf apps/users
@@ -98,7 +98,7 @@ jobs:
 
       - name: Run Django Tests with Coverage
         env:
-          DATABASE_URL: postgres://postgres:postgres@db:5432/testdb
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb
         run: |
           uv run coverage run --source='.' manage.py test --settings=config.settings.dev
           uv run coverage report
