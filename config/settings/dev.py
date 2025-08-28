@@ -1,5 +1,5 @@
 # config/settings/dev.py
-
+from . import base  # noqa: F401, F403, F405
 
 # 개발 환경용 설정
 DEBUG = True

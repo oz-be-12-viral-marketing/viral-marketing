@@ -1,5 +1,5 @@
 # config/settings/prod.py
-from .base import BASE_DIR
+from . import base  # noqa: F401, F403, F405
 
 DEBUG = False
 ALLOWED_HOSTS = ["your-production-domain.com"]
@@ -9,5 +9,5 @@ SESSION_COOKIE_SECURE = True
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = base.BASE_DIR / "staticfiles"
 STATICFILES_DIRS = []
