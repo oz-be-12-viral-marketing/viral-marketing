@@ -15,18 +15,15 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 # 작업 디렉토리 설정
 WORKDIR /app
 
-# pyproject.toml & uv.lock 복사 및 설치
-COPY ./pyproject.toml ./uv.lock ./
-
-RUN uv pip install --system .[dev]
-
 # 애플리케이션 코드 복사
 COPY . .
+
+# 종속성 설치
+RUN uv pip install --system .[dev]
 
 # 포트 설정
 EXPOSE 8000
 
 # 변경된 코드: 스크립트를 사용하여 애플리케이션 실행
-COPY ./scripts /scripts
-RUN chmod +x /scripts/run.sh
-CMD ["/scripts/run.sh"]
+RUN chmod +x /app/scripts/run.sh
+CMD ["/app/scripts/run.sh"]

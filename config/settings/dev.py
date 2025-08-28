@@ -1,5 +1,3 @@
-# config/settings/dev.py
-
 from .base import *
 
 # 개발 환경용 설정
@@ -15,7 +13,7 @@ DATABASES = {
         "NAME": "testdb",
         "USER": "postgres",
         "PASSWORD": "postgres",
-        "HOST": "localhost",
+        "HOST": "db",
         "PORT": "5432",
     }
 }
