@@ -20,24 +20,33 @@ DEBUG = False
 
 ALLOWED_HOSTS = []
 
-
-# Application definition
-
-INSTALLED_APPS = [
+DJANGO_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+]
+
+CUSTOM_APPS = [
+    "core",
+    "apps.accounts",
+    "apps.transaction_history",
+    "apps.users",
+    "apps.notifications",
+    "apps.analytics",
+]
+
+THIRD_PARTY_APPS = [
     "rest_framework",
     "django_filters",
-    "drf_spectacular",  # drf-spectacular 추가
-    "core",
-    "apps.accounts.apps.AccountsConfig",
-    "apps.transaction_history.apps.TransactionHistoryConfig",
-    "apps.users.apps.UsersConfig",
+    "drf_spectacular",
 ]
+
+# Application definition
+
+INSTALLED_APPS = DJANGO_APPS + CUSTOM_APPS + THIRD_PARTY_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
