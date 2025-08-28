@@ -36,7 +36,6 @@ INSTALLED_APPS = [
     "core.apps.CoreConfig",
     "apps.accounts.apps.AccountsConfig",
     "apps.transaction_history.apps.TransactionHistoryConfig",
-    "apps.users.apps.UsersConfig",
 
     # django-allauth
     "allauth",
