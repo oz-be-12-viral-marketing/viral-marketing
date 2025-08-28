@@ -1,11 +1,14 @@
+# config/settings/dev.py
+# 개발 환경용 설정
 from .base import *
 
-# 개발 환경용 설정
 DEBUG = True
 
 SECRET_KEY = "django-insecure-development-key"
 
 ALLOWED_HOSTS = ["*"]
+
+ROOT_URLCONF = "config.urls"
 
 DATABASES = {
     "default": {
@@ -13,7 +16,7 @@ DATABASES = {
         "NAME": "testdb",
         "USER": "postgres",
         "PASSWORD": "postgres",
-        "HOST": "db",
+        "HOST": "localhost",
         "PORT": "5432",
     }
 }

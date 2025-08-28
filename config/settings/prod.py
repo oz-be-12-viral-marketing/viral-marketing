@@ -1,8 +1,11 @@
 # config/settings/prod.py
-from .base import BASE_DIR
+from .base import *
 
 DEBUG = False
+
 ALLOWED_HOSTS = ["your-production-domain.com"]
+
+ROOT_URLCONF = "config.urls"
 
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
