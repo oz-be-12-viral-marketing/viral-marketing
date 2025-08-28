@@ -33,7 +33,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_filters",
     "drf_spectacular",  # drf-spectacular 추가
-    "core",
+    "core.apps.CoreConfig",
     "apps.accounts.apps.AccountsConfig",
     "apps.transaction_history.apps.TransactionHistoryConfig",
     "apps.users.apps.UsersConfig",
