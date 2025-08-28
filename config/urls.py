@@ -19,9 +19,16 @@ from django.contrib import admin
 from django.urls import path
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
+from apps.users.views import EmailVerificationView, LoginView, LogoutView, RegisterView, UserDetailView
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
     path("swagger/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
     path("redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
+    path("activate/<uidb64>/<token>/", EmailVerificationView.as_view(), name="activate-user"),
+    path("users/register/", RegisterView.as_view()),
+    path("users/login/", LoginView.as_view()),
+    path("users/logout/", LogoutView.as_view()),
+    path("users/detail/", UserDetailView.as_view(), name="user-detail"),
 ]

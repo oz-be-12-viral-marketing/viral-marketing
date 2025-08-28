@@ -1,16 +1,14 @@
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.12.10   # 원하는 버전
+    rev: v0.12.10
     hooks:
       - id: ruff
         args:
           - --fix
-                    - --extend-ignore=E501,F403  # 줄 길이 제한 무시, 와일드카드 임포트 무시
-          - --line-length=120  # 최대 줄 길이
-          - --exclude=migrations,venv  # 린트에서 제외할 폴더
-          - --select=F,E,W  # 체크할 규칙 종류
-
-
+          - --extend-ignore=E501,F403,F401  # 줄 길이 제한, wildcard import, unused import 무시
+          - --line-length=120
+          - --exclude=migrations,venv
+          - --select=F,E,W  # 코드 스타일 및 오류 체크만
 
   - repo: https://github.com/psf/black
     rev: 25.1.0
@@ -22,7 +20,7 @@ repos:
     rev: 6.0.1
     hooks:
       - id: isort
-        args: [--line-length=120]
+        args: [--line-length=120, --profile=black]
 
   - repo: https://github.com/pycqa/flake8
     rev: 7.3.0
