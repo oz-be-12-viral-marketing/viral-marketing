@@ -1,9 +1,15 @@
 # accounts/admin.py
 from django.contrib import admin
+from django.contrib.admin.sites import NotRegistered
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 User = get_user_model()
+
+try:
+    admin.site.unregister(User)
+except NotRegistered:
+    pass
 
 
 @admin.register(User)
