@@ -16,7 +16,7 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import include, path
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
 from apps.users.views import EmailVerificationView, LoginView, LogoutView, RegisterView, UserDetailView
@@ -31,4 +31,6 @@ urlpatterns = [
     path("users/login/", LoginView.as_view()),
     path("users/logout/", LogoutView.as_view()),
     path("users/detail/", UserDetailView.as_view(), name="user-detail"),
+    path("api/v1/", include("apps.accounts.urls")),
+    path("api/v1/", include("apps.transaction_history.urls")),
 ]

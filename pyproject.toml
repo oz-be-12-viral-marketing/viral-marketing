@@ -11,6 +11,7 @@ dependencies = [
     "gunicorn",
     "pre-commit>=4.3.0",
     "psycopg2-binary",
+    "django-filter>=24.2",
 ]
 
 [project.optional-dependencies]
