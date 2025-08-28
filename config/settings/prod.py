@@ -1,5 +1,5 @@
 # config/settings/prod.py
-from .base import BASE_DIR  # noqa: F403,F405
+from .base import *
 
 DEBUG = False
 
