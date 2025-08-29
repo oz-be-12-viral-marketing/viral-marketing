@@ -1,6 +1,7 @@
 # config/settings/base.py
 
 import os
+from datetime import timedelta
 from pathlib import Path
 
 import dj_database_url
@@ -147,4 +148,9 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
         "rest_framework.authentication.TokenAuthentication",
     ),
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
 }
