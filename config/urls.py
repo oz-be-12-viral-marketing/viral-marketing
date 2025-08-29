@@ -24,7 +24,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, Spec
 from apps.users.views import EmailVerificationView, LoginView, UserDetailView, TokenRefreshView
 
 urlpatterns = [
-    path("api/v1/users/login/", LoginView.as_as_view(), name="api_login"),
+    path("api/v1/users/login/", LoginView.as_view(), name="api_login"),
     path("", include("apps.frontend.urls")),
     path("admin/", admin.site.urls),
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
