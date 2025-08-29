@@ -3,9 +3,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import auth
 from apps.accounts.models import Account
 from apps.transaction_history.models import TransactionHistory
-from django.db.models import Sum
-from .forms import LoginForm, RegisterForm, AccountForm, TransactionForm # Import TransactionForm
-from django.contrib import messages
+from django.db.models import Sum, F # Import F for database expressions
+from django.db.models.functions import ExtractMonth # For extracting month from date
+from datetime import datetime, timezone # Import datetime and timezone
 
 # Create your views here.
 
@@ -18,9 +18,43 @@ def dashboard_view(request):
         account__user=request.user
     ).order_by('-id')[:5]
 
+    # --- Chart Data ---
+    # Get current year
+    current_year = datetime.now(timezone.utc).year
+
+    # Aggregate monthly income
+    monthly_income = TransactionHistory.objects.filter(
+        account__user=request.user,
+        transaction_type='DEPOSIT',
+        created_at__year=current_year
+    ).annotate(month=ExtractMonth('created_at')).values('month').annotate(total=Sum('amount')).order_by('month')
+
+    # Aggregate monthly expenses
+    monthly_expenses = TransactionHistory.objects.filter(
+        account__user=request.user,
+        transaction_type='WITHDRAW',
+        created_at__year=current_year
+    ).annotate(month=ExtractMonth('created_at')).values('month').annotate(total=Sum('amount')).order_by('month')
+
+    # Prepare data for Chart.js
+    months = [str(i) for i in range(1, 13)] # Months 1-12
+    income_data = [0] * 12
+    expense_data = [0] * 12
+
+    for item in monthly_income:
+        income_data[item['month'] - 1] = float(item['total'])
+
+    for item in monthly_expenses:
+        expense_data[item['month'] - 1] = float(item['total'])
+    
+    # --- End Chart Data ---
+
     context = {
         'total_balance': total_balance,
         'recent_transactions': recent_transactions,
+        'months': months,
+        'income_data': income_data,
+        'expense_data': expense_data,
     }
     return render(request, 'dashboard.html', context)
 

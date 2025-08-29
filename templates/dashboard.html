@@ -3,16 +3,24 @@
 
 {% block title %}대시보드{% endblock %}
 
+{% block extra_head %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
 {% block content %}
 <div class="row">
     <div class="col-md-12">
-        <h1>환영합니다, {{ user.nickname }}님!</h1> {# Use user.nickname from request.user #}
+        <h1>환영합니다, {{ user.nickname }}님!</h1>
         <p>가계부 시스템 대시보드입니다.</p>
-        <div class="card mb-4"> {# Added mb-4 for margin-bottom #}
+        <div class="card mb-4">
             <div class="card-body">
                 <h5 class="card-title">총 잔액</h5>
-                <p class="card-text display-4">₩ {{ total_balance|floatformat:0|intcomma }}</p> {# Format as currency #}
+                <p class="card-text display-4">₩ {{ total_balance|floatformat:0|intcomma }}</p>
             </div>
+        </div>
+        <div class="mt-4">
+            <h2>월별 수입/지출</h2>
+            <canvas id="incomeExpenseChart"></canvas>
         </div>
         <div class="mt-4">
             <h2>최근 거래 내역</h2>
@@ -30,4 +38,57 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const ctx = document.getElementById('incomeExpenseChart');
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: {{ months|safe }},
+            datasets: [
+                {
+                    label: '수입',
+                    data: {{ income_data|safe }},
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: '지출',
+                    data: {{ expense_data|safe }},
+                    backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: '금액 (₩)'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: '월'
+                    }
+                }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: '월별 수입 및 지출 분석'
+                }
+            }
+        }
+    });
+</script>
 {% endblock %}
