@@ -18,7 +18,7 @@ class UserSignupSerializer(serializers.ModelSerializer):
             name=validated_data["name"],
             nickname=validated_data["nickname"],
             phone_number=validated_data["phone_number"],
-            is_active=False,  # 이메일 인증 후 활성화
+            is_active=True,  # 이메일 인증 후 활성화
         )
         return user
 
