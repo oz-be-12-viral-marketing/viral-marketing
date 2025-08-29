@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib import auth # Corrected import
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.utils.encoding import force_bytes
@@ -11,6 +12,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenRefreshView as SimpleJWTRefreshView # Added
+from django.shortcuts import redirect
 
 from apps.users.serializers import (
     EmailVerificationSerializer,
@@ -94,7 +97,7 @@ class LoginView(GenericAPIView):
         response.set_cookie(
             key="access_token",
             value=access_token,
-            httponly=True,
+            httponly=True, # Reverted to HttpOnly
             samesite="Strict",
         )
         response.set_cookie(
@@ -117,9 +120,46 @@ class LogoutView(GenericAPIView):
         except Exception:
             return Response({"message": "유효하지 않은 토큰입니다."}, status=status.HTTP_400_BAD_REQUEST)
 
-        response = Response({"message": "성공적으로 로그아웃했습니다."}, status=status.HTTP_200_OK)
+        auth.logout(request) # Explicitly log out Django session
+        response = redirect('logged_out') # Redirect to dedicated logged out page after successful logout
         response.delete_cookie("access_token")
         response.delete_cookie("refresh_token")
+        return response
+
+
+class TokenRefreshView(SimpleJWTRefreshView):
+    def post(self, request, *args, **kwargs):
+        # Get refresh token from cookies
+        refresh_token = request.COOKIES.get("refresh_token")
+        if not refresh_token:
+            return Response({"detail": "Refresh token not found in cookies."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create a dummy serializer to pass the refresh token
+        # This is a workaround because SimpleJWTRefreshView expects it in the body
+        request.data["refresh"] = refresh_token
+
+        response = super().post(request, *args, **kwargs)
+
+        if response.status_code == status.HTTP_200_OK:
+            access_token = response.data["access"]
+            # Set new access_token as HttpOnly cookie
+            response.set_cookie(
+                key="access_token",
+                value=access_token,
+                httponly=True,
+                samesite="Strict",
+            )
+            # Remove access token from response body for security
+            del response.data["access"]
+            # Optionally, if a new refresh token is issued, set it as HttpOnly too
+            if "refresh" in response.data:
+                response.set_cookie(
+                    key="refresh_token",
+                    value=response.data["refresh"],
+                    httponly=True,
+                    samesite="Strict",
+                )
+                del response.data["refresh"]
         return response
 
 

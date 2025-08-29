@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib import auth
+from django.contrib import auth, messages
 from apps.accounts.models import Account
 from apps.transaction_history.models import TransactionHistory
-from django.db.models import Sum, F # Import F for database expressions
+from django.db.models import Sum # Import F for database expressions
 from django.db.models.functions import ExtractMonth # For extracting month from date
 from datetime import datetime, timezone # Import datetime and timezone
+from .forms import LoginForm, RegisterForm, AccountForm, TransactionForm
 
 # Create your views here.
 
@@ -137,3 +138,10 @@ def transactions_list_view(request):
         'form': form,
     }
     return render(request, 'transactions_list.html', context)
+
+@login_required
+def profile_view(request):
+    return render(request, 'profile.html')
+
+def logged_out_view(request):
+    return render(request, 'logged_out.html')

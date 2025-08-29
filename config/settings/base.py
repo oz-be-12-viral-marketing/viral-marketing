@@ -4,7 +4,6 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
-import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -43,7 +42,7 @@ CUSTOM_APPS = [
     "apps.users",
     "apps.notifications",
     "apps.analysis",
-    "frontend",
+    "apps.frontend",
 ]
 
 THIRD_PARTY_APPS = [
@@ -86,10 +85,11 @@ SITE_ID = 1
 # allauth settings
 LOGIN_REDIRECT_URL = "/"
 ACCOUNT_LOGOUT_REDIRECT_URL = "/"
-ACCOUNT_EMAIL_VERIFICATION = "none"
-ACCOUNT_LOGIN_METHODS = ["email"]
+ACCOUNT_LOGIN_METHODS = {'email'}
+ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
-ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
 ACCOUNT_FORMS = {
     'signup': 'apps.users.forms.CustomSignupForm',
 }
@@ -135,10 +135,10 @@ WSGI_APPLICATION = "config.wsgi.application"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    "default": dj_database_url.config(
-        default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
-        conn_max_age=600,
-    )
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
 }
 
 

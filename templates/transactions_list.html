@@ -89,6 +89,8 @@
     </div>
 </div>
 
+{% endblock content %}
+
 {% block extra_js %}
 <script>
     // Show modal if form has errors after POST request
@@ -96,5 +98,59 @@
         var addTransactionModal = new bootstrap.Modal(document.getElementById('addTransactionModal'));
         addTransactionModal.show();
     {% endif %}
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const addTransactionForm = document.querySelector('#addTransactionModal form');
+        addTransactionForm.setAttribute('novalidate', ''); // Disable default browser validation
+
+        addTransactionForm.addEventListener('submit', function(event) {
+            let isValid = true;
+
+            // Get form fields
+            const accountInput = document.getElementById('id_account');
+            const transactionTypeInput = document.getElementById('id_transaction_type');
+            const amountInput = document.getElementById('id_amount');
+            const transactionDetailInput = document.getElementById('id_transaction_detail');
+            const transactionMethodInput = document.getElementById('id_transaction_method');
+
+            // Helper function to validate a field
+            function validateField(inputElement, errorMessage) {
+                inputElement.classList.remove('is-invalid', 'is-valid');
+                const existingErrorDiv = inputElement.nextElementSibling;
+                if (existingErrorDiv && existingErrorDiv.classList.contains('invalid-feedback')) {
+                    existingErrorDiv.remove();
+                }
+
+                if (inputElement.value.trim() === '' || (inputElement.tagName === 'SELECT' && inputElement.value === '')) {
+                    inputElement.classList.add('is-invalid');
+                    inputElement.insertAdjacentHTML('afterend', `<div class="invalid-feedback d-block">${errorMessage}</div>`);
+                    isValid = false;
+                } else {
+                    inputElement.classList.add('is-valid');
+                }
+            }
+
+            // Validate fields
+            validateField(accountInput, '계좌를 선택해주세요.');
+            validateField(transactionTypeInput, '유형을 선택해주세요.');
+            validateField(amountInput, '금액을 입력해주세요.');
+            // transactionDetail is optional, so no validation for empty
+            validateField(transactionMethodInput, '거래 방식을 선택해주세요.');
+
+            // Specific validation for amount to be a positive number
+            if (amountInput.value.trim() !== '') {
+                const amount = parseFloat(amountInput.value);
+                if (isNaN(amount) || amount <= 0) {
+                    amountInput.classList.add('is-invalid');
+                    amountInput.insertAdjacentHTML('afterend', '<div class="invalid-feedback d-block">유효한 금액을 입력해주세요.</div>');
+                    isValid = false;
+                }
+            }
+
+            if (!isValid) {
+                event.preventDefault(); // Prevent form submission if validation fails
+            }
+        });
+    });
 </script>
 {% endblock %}

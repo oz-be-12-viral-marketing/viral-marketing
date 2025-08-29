@@ -19,10 +19,10 @@ from django.contrib import admin
 from django.urls import include, path
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
-from apps.users.views import EmailVerificationView, LoginView, LogoutView, RegisterView, UserDetailView
+from apps.users.views import EmailVerificationView, LoginView, LogoutView, RegisterView, UserDetailView, TokenRefreshView
 
 urlpatterns = [
-    path("", include("frontend.urls")),
+    path("", include("apps.frontend.urls")),
     path("admin/", admin.site.urls),
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
     path("swagger/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
@@ -32,7 +32,8 @@ urlpatterns = [
     path("users/register/", RegisterView.as_view()),
     path("users/login/", LoginView.as_view()),
     path("users/logout/", LogoutView.as_view()),
-    path("users/detail/", UserDetailView.as_view(), name="user-detail"),
+    path("profile/", UserDetailView.as_view(), name="profile"),
+    path("users/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"), # Added
     path("api/v1/", include("apps.accounts.urls")),
     path("api/v1/", include("apps.transaction_history.urls")),
 ]

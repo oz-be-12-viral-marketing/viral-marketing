@@ -55,22 +55,24 @@ class RegisterForm(forms.ModelForm):
 
 class AccountForm(forms.ModelForm):
     bank_code = forms.ChoiceField(choices=BANK_CODES, widget=forms.Select(attrs={'class': 'form-select'}))
+    account_number = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '계좌번호'}), label='계좌번호')
     account_type = forms.ChoiceField(choices=ACCOUNT_TYPE, widget=forms.Select(attrs={'class': 'form-control'}))
     currency = forms.ChoiceField(choices=CURRENCIES, widget=forms.Select(attrs={'class': 'form-select'}))
     
     class Meta:
         model = Account
-        fields = ['bank_code', 'account_type', 'currency'] # Only these fields are user-inputted
-        # account_number, balance, user are handled by the view/model
+        fields = ['bank_code', 'account_number', 'account_type', 'currency'] # Added account_number
+        # balance, user are handled by the view/model
         widgets = {
-            # No need for account_number, balance, user here
+            # No need for balance, user here
         }
 
     def save(self, commit=True, user=None):
         account = super().save(commit=False)
         if user:
             account.user = user
-        # account_number and balance will be set in the view or model's save method/signal
+        # account_number is now handled by the form
+        # balance will be set in the view or model's save method/signal
         if commit:
             account.save()
         return account
@@ -131,3 +133,13 @@ class TransactionForm(forms.ModelForm):
         if commit:
             transaction.save()
         return transaction
+
+class ProfileEditForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['name', 'nickname', 'phone_number']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'nickname': forms.TextInput(attrs={'class': 'form-control'}),
+            'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
+        }

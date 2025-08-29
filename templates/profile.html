@@ -1,0 +1,274 @@
+{% extends 'base.html' %}
+
+{% block title %}내 프로필{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h2>내 프로필</h2>
+                    <button id="edit-profile-btn" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editProfileModal">프로필 수정</button>
+                </div>
+                <div class="card-body">
+                    <div id="loading-indicator" class="text-center my-3">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">로딩 중...</span>
+                        </div>
+                        <p class="mt-2">프로필 정보를 불러오는 중...</p>
+                    </div>
+                    <div id="user-details" class="d-none">
+                        <h5 class="card-title mb-3">기본 정보</h5>
+                        <ul class="list-group list-group-flush mb-4">
+                            <li class="list-group-item"><strong>이메일:</strong> <span id="user-email"></span></li>
+                            <li class="list-group-item"><strong>이름:</strong> <span id="user-name"></span></li>
+                            <li class="list-group-item"><strong>닉네임:</strong> <span id="user-nickname"></span></li>
+                            <li class="list-group-item"><strong>전화번호:</strong> <span id="user-phone"></span></li>
+                        </ul>
+                        <!-- Add more sections/fields as needed -->
+                    </div>
+                    <div id="error-message" class="alert alert-danger d-none" role="alert">
+                        프로필 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editProfileModalLabel">프로필 수정</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="editProfileForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="edit_name" class="form-label">이름</label>
+                        <input type="text" class="form-control" id="edit_name" name="name">
+                        <div class="invalid-feedback" id="edit_name_error"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_nickname" class="form-label">닉네임</label>
+                        <input type="text" class="form-control" id="edit_nickname" name="nickname">
+                        <div class="invalid-feedback" id="edit_nickname_error"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_phone_number" class="form-label">전화번호</label>
+                        <input type="text" class="form-control" id="edit_phone_number" name="phone_number">
+                        <div class="invalid-feedback" id="edit_phone_number_error"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <button type="submit" class="btn btn-primary">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const userDetailsDiv = document.getElementById('user-details');
+        const errorMessageDiv = document.getElementById('error-message');
+        const editProfileBtn = document.getElementById('edit-profile-btn');
+        const editProfileModal = new bootstrap.Modal(document.getElementById('editProfileModal'));
+        const editProfileForm = document.getElementById('editProfileForm');
+
+        // Function to get cookie by name (only for non-HttpOnly cookies like csrftoken)
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Function to refresh access token
+        async function refreshAccessToken() {
+            try {
+                const response = await fetch('/users/token/refresh/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken') // CSRF token for POST request
+                    },
+                    body: JSON.stringify({ refresh: getCookie('refresh_token') })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to refresh token: ' + response.statusText);
+                }
+
+                // The backend will set the new HttpOnly access_token cookie.
+                // No need to read it from response body or set it manually here.
+                return true; // Indicate success
+            } catch (error) {
+                console.error('Error refreshing token:', error);
+                // Redirect to login if token refresh fails
+                window.location.href = '/login/';
+                throw error; // Re-throw to stop further execution
+            }
+        }
+
+        // Function to fetch and display user details
+        async function fetchUserDetails() {
+            loadingIndicator.classList.remove('d-none');
+            userDetailsDiv.classList.add('d-none');
+            errorMessageDiv.classList.add('d-none');
+
+            try {
+                const response = await fetch('/profile/', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // No Authorization header needed, browser sends HttpOnly access_token
+                    }
+                });
+
+                if (response.status === 401) {
+                    // If 401, try to refresh token and retry request
+                    await refreshAccessToken(); // This will set a new HttpOnly access_token
+                    const retryResponse = await fetch('/profile/', {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            // No Authorization header needed for retry either
+                        }
+                    });
+                    if (!retryResponse.ok) {
+                        throw new Error('Retry failed: ' + retryResponse.statusText);
+                    }
+                    return retryResponse.json();
+                }
+
+                if (!response.ok) {
+                    const errorBody = await response.json().catch(() => null);
+                    if (errorBody) {
+                        for (const field in errorBody) {
+                            const inputElement = document.getElementById('edit_' + field);
+                            if (inputElement) {
+                                inputElement.classList.add('is-invalid');
+                                inputElement.insertAdjacentHTML('afterend', `<div class="invalid-feedback d-block">${errorBody[field]}</div>`);
+                            } else if (field === 'non_field_errors' || field === 'detail') {
+                                alert('프로필 업데이트 실패: ' + errorBody[field]);
+                            }
+                        }
+                    }
+                    throw new Error('API Error: ' + (errorBody ? (errorBody.detail || errorBody.message || response.statusText) : response.statusText));
+                }
+                return response.json();
+            } catch (error) {
+                console.error('Error fetching user details:', error);
+                errorMessageDiv.textContent = '프로필 정보를 불러오는 데 실패했습니다: ' + (error.message || '알 수 없는 오류');
+                loadingIndicator.classList.add('d-none');
+                errorMessageDiv.classList.remove('d-none');
+            } finally {
+                loadingIndicator.classList.add('d-none');
+            }
+        }
+
+        // Initial fetch of user details
+        fetchUserDetails().then(data => {
+            if (data) {
+                document.getElementById('user-email').textContent = data.email || 'N/A';
+                document.getElementById('user-name').textContent = data.name || 'N/A';
+                document.getElementById('user-nickname').textContent = data.nickname || 'N/A';
+                document.getElementById('user-phone').textContent = data.phone_number || 'N/A';
+                
+                // Populate edit form fields
+                document.getElementById('edit_name').value = data.name || '';
+                document.getElementById('edit_nickname').value = data.nickname || '';
+                document.getElementById('edit_phone_number').value = data.phone_number || '';
+
+                userDetailsDiv.classList.remove('d-none');
+            }
+        });
+
+        // Handle edit form submission
+        editProfileForm.addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const formData = new FormData(editProfileForm);
+            const payload = {};
+            for (let [key, value] of formData.entries()) {
+                payload[key] = value;
+            }
+
+            // Clear previous validation feedback
+            editProfileForm.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+            editProfileForm.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
+
+            try {
+                const response = await fetch('/profile/', {
+                    method: 'PATCH', // Use PATCH for partial updates
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken') // Include CSRF token for PATCH
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.status === 401) {
+                    await refreshAccessToken();
+                    const retryResponse = await fetch('/profile/', {
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCookie('csrftoken')
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!retryResponse.ok) {
+                        throw new Error('Retry failed: ' + retryResponse.statusText);
+                    }
+                    // Re-fetch user details to update displayed info
+                    alert('프로필이 성공적으로 업데이트되었습니다!');
+                    editProfileModal.hide(); // Close modal
+                    fetchUserDetails(); // Refresh displayed details
+                    return;
+                }
+
+                if (!response.ok) {
+                    const errorBody = await response.json().catch(() => null);
+                    if (errorBody) {
+                        for (const field in errorBody) {
+                            const inputElement = document.getElementById('edit_' + field);
+                            if (inputElement) {
+                                inputElement.classList.add('is-invalid');
+                                inputElement.insertAdjacentHTML('afterend', `<div class="invalid-feedback d-block">${errorBody[field]}</div>`);
+                            } else if (field === 'non_field_errors' || field === 'detail') {
+                                alert('프로필 업데이트 실패: ' + errorBody[field]);
+                            }
+                        }
+                    }
+                    throw new Error('API Error: ' + (errorBody ? (errorBody.detail || errorBody.message || response.statusText) : response.statusText));
+                }
+
+                alert('프로필이 성공적으로 업데이트되었습니다!');
+                editProfileModal.hide(); // Close modal
+                fetchUserDetails(); // Refresh displayed details
+            }
+            catch (error) {
+                console.error('Error updating profile:', error);
+                alert('프로필 업데이트 중 오류가 발생했습니다: ' + (error.message || '알 수 없는 오류'));
+            }
+        });
+    });
+</script>
+{% endblock %}

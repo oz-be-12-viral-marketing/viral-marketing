@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils import timezone # Added for default value
 
 from apps.accounts.models import Account
 from apps.transaction_history.choices import TRANSACTION_METHOD, TRANSACTION_TYPE

@@ -3,36 +3,89 @@
 {% block title %}로그인{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">로그인</div>
-            <div class="card-body">
-                <form method="post">
-                    {% csrf_token %}
-                    {% if form.non_field_errors %}
-                        <div class="alert alert-danger" role="alert">
-                            {% for error in form.non_field_errors %}
-                                {{ error }}
-                            {% endfor %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-header text-center bg-primary text-white">
+                    <h3 class="mb-0">로그인</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger" role="alert">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        {% for field in form %}
+                            <div class="mb-3">
+                                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.help_text %}
+                                    <div class="form-text">{{ field.help_text }}</div>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                    <div class="invalid-feedback d-block">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">로그인</button>
                         </div>
-                    {% endif %}
-                    {% for field in form %}
-                        <div class="mb-3">
-                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                            {{ field }}
-                            {% if field.help_text %}
-                                <div class="form-text">{{ field.help_text }}</div>
-                            {% endif %}
-                            {% for error in field.errors %}
-                                <div class="invalid-feedback d-block">{{ error }}</div>
-                            {% endfor %}
-                        </div>
-                    {% endfor %}
-                    <button type="submit" class="btn btn-primary">로그인</button>
-                </form>
+                    </form>
+                    <div class="text-center mt-3">
+                        <p>계정이 없으신가요? <a href="{% url 'register' %}">회원가입</a></p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        const emailInput = document.getElementById('id_email');
+        const passwordInput = document.getElementById('id_password');
+
+        form.setAttribute('novalidate', ''); // Disable default browser validation
+
+        form.addEventListener('submit', function(event) {
+            let isValid = true;
+
+            // Clear previous validation states
+            emailInput.classList.remove('is-invalid', 'is-valid');
+            passwordInput.classList.remove('is-invalid', 'is-valid');
+            const emailErrorDiv = emailInput.nextElementSibling;
+            const passwordErrorDiv = passwordInput.nextElementSibling;
+            if (emailErrorDiv && emailErrorDiv.classList.contains('invalid-feedback')) emailErrorDiv.remove();
+            if (passwordErrorDiv && passwordErrorDiv.classList.contains('invalid-feedback')) passwordErrorDiv.remove();
+
+            // Validate Email
+            if (emailInput.value.trim() === '') {
+                emailInput.classList.add('is-invalid');
+                emailInput.insertAdjacentHTML('afterend', '<div class="invalid-feedback d-block">이메일을 입력해주세요.</div>');
+                isValid = false;
+            } else {
+                emailInput.classList.add('is-valid');
+            }
+
+            // Validate Password
+            if (passwordInput.value.trim() === '') {
+                passwordInput.classList.add('is-invalid');
+                passwordInput.insertAdjacentHTML('afterend', '<div class="invalid-feedback d-block">비밀번호를 입력해주세요.</div>');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                event.preventDefault(); // Prevent form submission if validation fails
+            }
+        });
+    });
+</script>
 {% endblock %}
