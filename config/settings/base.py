@@ -33,6 +33,7 @@ DJANGO_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sites",
+    "debug_toolbar",
 ]
 
 CUSTOM_APPS = [
@@ -64,6 +65,7 @@ THIRD_PARTY_APPS = [
 INSTALLED_APPS = DJANGO_APPS + CUSTOM_APPS + THIRD_PARTY_APPS
 
 MIDDLEWARE = [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "allauth.account.middleware.AccountMiddleware",
@@ -72,6 +74,10 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+]
+
+INTERNAL_IPS = [
+    "127.0.0.1",
 ]
 
 AUTHENTICATION_BACKENDS = (
@@ -89,9 +95,8 @@ ACCOUNT_LOGIN_METHODS = ["email"]
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_FORMS = {
-    'signup': 'apps.users.forms.CustomSignupForm',
+    "signup": "apps.users.forms.CustomSignupForm",
 }
-
 
 
 SOCIALACCOUNT_PROVIDERS = {
