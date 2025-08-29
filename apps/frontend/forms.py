@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth import authenticate
 from apps.users.models import CustomUser
+from apps.accounts.models import Account # Import Account model
+from apps.accounts.choices import BANK_CODES, ACCOUNT_TYPE, CURRENCIES # Import choices
 
 class LoginForm(forms.Form):
     email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': '이메일 주소'}))
@@ -48,3 +50,25 @@ class RegisterForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+class AccountForm(forms.ModelForm):
+    bank_code = forms.ChoiceField(choices=BANK_CODES, widget=forms.Select(attrs={'class': 'form-select'}))
+    account_type = forms.ChoiceField(choices=ACCOUNT_TYPE, widget=forms.Select(attrs={'class': 'form-select'}))
+    currency = forms.ChoiceField(choices=CURRENCIES, widget=forms.Select(attrs={'class': 'form-select'}))
+    
+    class Meta:
+        model = Account
+        fields = ['bank_code', 'account_type', 'currency'] # Only these fields are user-inputted
+        # account_number, balance, user are handled by the view/model
+        widgets = {
+            # No need for account_number, balance, user here
+        }
+
+    def save(self, commit=True, user=None):
+        account = super().save(commit=False)
+        if user:
+            account.user = user
+        # account_number and balance will be set in the view or model's save method/signal
+        if commit:
+            account.save()
+        return account
