@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load socialaccount %}
 
 {% block title %}로그인{% endblock %}
 
@@ -7,37 +8,42 @@
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card shadow-lg">
-                <div class="card-header text-center bg-primary text-white">
+                <div class="card-header text-center">
                     <h3 class="mb-0">로그인</h3>
                 </div>
                 <div class="card-body p-4">
-                    <form method="post">
+                    <form id="login-form">
                         {% csrf_token %}
-                        {% if form.non_field_errors %}
-                            <div class="alert alert-danger" role="alert">
-                                {% for error in form.non_field_errors %}
-                                    {{ error }}
-                                {% endfor %}
-                            </div>
-                        {% endif %}
                         {% for field in form %}
                             <div class="mb-3">
                                 <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
                                 {{ field }}
-                                {% if field.help_text %}
-                                    <div class="form-text">{{ field.help_text }}</div>
-                                {% endif %}
-                                {% for error in field.errors %}
-                                    <div class="invalid-feedback d-block">{{ error }}</div>
-                                {% endfor %}
                             </div>
                         {% endfor %}
                         <div class="d-grid gap-2 mt-4">
                             <button type="submit" class="btn btn-primary btn-lg">로그인</button>
                         </div>
                     </form>
-                    <div class="text-center mt-3">
-                        <p>계정이 없으신가요? <a href="{% url 'register' %}">회원가입</a></p>
+
+                    <hr>
+
+                    <div class="text-center my-3">
+                        <p class="text-muted">또는 소셜 계정으로 로그인</p>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <a href="{% provider_login_url 'google' %}" class="btn btn-light border d-flex align-items-center justify-content-center">
+                            <i class="bi bi-google me-2"></i> Google로 로그인
+                        </a>
+                        <a href="{% provider_login_url 'naver' %}" class="btn btn-success text-white d-flex align-items-center justify-content-center">
+                            <i class="bi bi-unlock-fill me-2"></i> Naver로 로그인
+                        </a>
+                        <a href="{% provider_login_url 'kakao' %}" class="btn btn-warning text-dark d-flex align-items-center justify-content-center">
+                            <i class="bi bi-chat-fill me-2"></i> Kakao로 로그인
+                        </a>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <p>계정이 없으신가요? <a href="{% url 'account_signup' %}">회원가입</a></p>
                     </div>
                 </div>
             </div>
@@ -48,44 +54,64 @@
 
 {% block extra_js %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const form = document.querySelector('form');
-        const emailInput = document.getElementById('id_email');
-        const passwordInput = document.getElementById('id_password');
+document.addEventListener('DOMContentLoaded', function() {
+    const loginForm = document.getElementById('login-form');
 
-        form.setAttribute('novalidate', ''); // Disable default browser validation
+    loginForm.addEventListener('submit', async function(event) {
+        event.preventDefault(); // Stop default form submission
 
-        form.addEventListener('submit', function(event) {
-            let isValid = true;
+        // Clear previous errors
+        const existingAlert = loginForm.querySelector('.alert.alert-danger');
+        if (existingAlert) {
+            existingAlert.remove();
+        }
+        loginForm.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        loginForm.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
 
-            // Clear previous validation states
-            emailInput.classList.remove('is-invalid', 'is-valid');
-            passwordInput.classList.remove('is-invalid', 'is-valid');
-            const emailErrorDiv = emailInput.nextElementSibling;
-            const passwordErrorDiv = passwordInput.nextElementSibling;
-            if (emailErrorDiv && emailErrorDiv.classList.contains('invalid-feedback')) emailErrorDiv.remove();
-            if (passwordErrorDiv && passwordErrorDiv.classList.contains('invalid-feedback')) passwordErrorDiv.remove();
+        const formData = new FormData(loginForm);
+        const payload = Object.fromEntries(formData.entries());
 
-            // Validate Email
-            if (emailInput.value.trim() === '') {
-                emailInput.classList.add('is-invalid');
-                emailInput.insertAdjacentHTML('afterend', '<div class="invalid-feedback d-block">이메일을 입력해주세요.</div>');
-                isValid = false;
-            } else {
-                emailInput.classList.add('is-valid');
+        try {
+            const response = await fetch("{% url 'api_login' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': payload.csrfmiddlewaretoken
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                // Handle API errors (e.g., validation errors)
+                if (data.detail) {
+                    const errorHtml = `<div class="alert alert-danger mt-3" role="alert">${data.detail}</div>`;
+                    loginForm.insertAdjacentHTML('afterbegin', errorHtml);
+                } else if (data.non_field_errors) {
+                    const errorHtml = `<div class="alert alert-danger mt-3" role="alert">${data.non_field_errors.join(', ')}</div>`;
+                    loginForm.insertAdjacentHTML('afterbegin', errorHtml);
+                } else {
+                    // Handle field-specific errors
+                    for (const field in data) {
+                        const inputElement = document.getElementById('id_' + field);
+                        if (inputElement) {
+                            inputElement.classList.add('is-invalid');
+                            const errorHtml = `<div class="invalid-feedback d-block">${data[field].join(', ')}</div>`;
+                            inputElement.parentElement.insertAdjacentHTML('beforeend', errorHtml);
+                        }
+                    }
+                }
+                throw new Error('Login failed');
             }
 
-            // Validate Password
-            if (passwordInput.value.trim() === '') {
-                passwordInput.classList.add('is-invalid');
-                passwordInput.insertAdjacentHTML('afterend', '<div class="invalid-feedback d-block">비밀번호를 입력해주세요.</div>');
-                isValid = false;
-            }
+            // Login successful
+            window.location.href = "{% url 'dashboard' %}";
 
-            if (!isValid) {
-                event.preventDefault(); // Prevent form submission if validation fails
-            }
-        });
+        } catch (error) {
+            console.error('An error occurred:', error);
+        }
     });
+});
 </script>
 {% endblock %}

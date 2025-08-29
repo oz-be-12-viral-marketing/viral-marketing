@@ -35,7 +35,7 @@ class LoginSerializer(serializers.Serializer):
     def validate(self, attrs):
         user = authenticate(email=attrs.get("email"), password=attrs.get("password"))
         if not user:
-            raise serializers.ValidationError("Invalid credentials")
+            raise serializers.ValidationError("이메일 또는 비밀번호가 올바르지 않습니다.")
         attrs["user"] = user
         return attrs
 
@@ -49,3 +49,17 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ["id", "email", "name", "nickname", "phone_number"]
         read_only_fields = ["email"]
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name)
+        instance.nickname = validated_data.get('nickname', instance.nickname)
+
+        # Handle unique, nullable field to avoid IntegrityError with empty strings
+        phone_number = validated_data.get('phone_number', instance.phone_number)
+        if phone_number == '':
+            instance.phone_number = None
+        else:
+            instance.phone_number = phone_number
+
+        instance.save()
+        return instance

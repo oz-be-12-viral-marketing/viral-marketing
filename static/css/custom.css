@@ -1,0 +1,117 @@
+/* viral-marketing-feature-test/static/css/custom.css */
+
+:root {
+    --bs-primary: #3A86FF;
+    --bs-primary-rgb: 58, 134, 255;
+    --bs-body-bg: #F8F9FA;
+    --bs-primary-light-rgb: 58, 134, 255, 0.1; /* For active nav link */
+}
+
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--bs-body-bg);
+}
+
+main {
+    flex: 1;
+}
+
+/* Navbar Styles */
+.navbar {
+    border-bottom: 1px solid #dee2e6;
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+.navbar-nav .nav-link.active {
+    color: var(--bs-primary) !important;
+    background-color: rgba(var(--bs-primary-light-rgb));
+    border-radius: 0.5rem;
+    font-weight: 600;
+}
+
+/* Card Styles */
+.card {
+    border: none;
+    border-radius: 0.75rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-header {
+    background-color: transparent;
+    border-bottom: 1px solid #e9ecef;
+    font-weight: 700;
+    font-size: 1.25rem;
+}
+
+/* Button Styles */
+.btn-primary {
+    background-image: linear-gradient(to bottom, #3A86FF, #2c79e8);
+    border: none;
+    font-weight: 600;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0.25rem 0.5rem rgba(0,0,0,0.1);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+}
+
+/* Table Styles */
+.table {
+    vertical-align: middle;
+}
+
+.table th {
+    font-weight: 600;
+}
+
+/* Icon & Header Styles */
+.icon-box {
+    width: 48px;
+    height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(var(--bs-primary-light-rgb));
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.icon-box .bi {
+    font-size: 1.75rem;
+    color: var(--bs-primary);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem; /* Increased gap */
+    margin-bottom: 1.5rem;
+}
+
+.section-header h2 {
+    margin-bottom: 0;
+}
+
+/* Footer Styles */
+footer.footer {
+    background-color: #ffffff;
+    border-top: 1px solid #dee2e6;
+    padding: 1rem 0;
+    text-align: center;
+}

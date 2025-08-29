@@ -81,6 +81,9 @@ class LoginView(GenericAPIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data["user"]
 
+        # Log the user into the Django session framework as well
+        auth.login(request, user)
+
         refresh = RefreshToken.for_user(user)
         access_token = str(refresh.access_token)
 
@@ -97,7 +100,7 @@ class LoginView(GenericAPIView):
         response.set_cookie(
             key="access_token",
             value=access_token,
-            httponly=True, # Reverted to HttpOnly
+            httponly=True,
             samesite="Strict",
         )
         response.set_cookie(
@@ -127,18 +130,24 @@ class LogoutView(GenericAPIView):
         return response
 
 
+from rest_framework_simplejwt.serializers import TokenRefreshSerializer
+
+
 class TokenRefreshView(SimpleJWTRefreshView):
     def post(self, request, *args, **kwargs):
-        # Get refresh token from cookies
         refresh_token = request.COOKIES.get("refresh_token")
         if not refresh_token:
             return Response({"detail": "Refresh token not found in cookies."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Create a dummy serializer to pass the refresh token
-        # This is a workaround because SimpleJWTRefreshView expects it in the body
-        request.data["refresh"] = refresh_token
+        serializer = TokenRefreshSerializer(data={"refresh": refresh_token})
+        
+        try:
+            serializer.is_valid(raise_exception=True)
+        except Exception as e:
+            # Return the actual validation error
+            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-        response = super().post(request, *args, **kwargs)
+        response = Response(serializer.validated_data, status=status.HTTP_200_OK)
 
         if response.status_code == status.HTTP_200_OK:
             access_token = response.data["access"]

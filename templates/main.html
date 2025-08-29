@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}가계부 시스템에 오신 것을 환영합니다{% endblock %}
+
+{% block content %}
+<div class="container text-center py-5">
+    <h1 class="display-4 fw-bold">똑똑한 소비의 시작</h1>
+    <p class="lead text-muted my-4">가계부 시스템으로 당신의 자산을 관리하고, 현명한 소비 습관을 만들어보세요.</p>
+    <a href="{% url 'login' %}" class="btn btn-primary btn-lg">로그인하고 시작하기</a>
+</div>
+{% endblock %}

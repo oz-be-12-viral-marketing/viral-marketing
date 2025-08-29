@@ -8,27 +8,36 @@
 {% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="row">
+<div class="py-4">
+    <div class="row mb-4">
         <div class="col-md-12">
-            <h1 class="mb-4">환영합니다, {{ user.nickname }}님!</h1>
+            <h1 class="display-5 fw-bold">환영합니다, {{ user.nickname }}님!</h1>
+            <p class="text-muted">오늘도 현명한 소비를 시작해 보세요.</p>
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-6 mb-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <h5 class="card-title text-primary">총 잔액</h5>
-                    <p class="card-text display-4">₩ {{ total_balance|floatformat:0|intcomma }}</p>
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <div class="section-header justify-content-center">
+                                                <div class="icon-box"><i class="bi bi-wallet2"></i></div>
+                        <h2 class="card-title h5">총 잔액</h2>
+                    </div>
+                    <p class="card-text display-4 fw-bold">₩ {{ total_balance|floatformat:0|intcomma }}</p>
                 </div>
             </div>
         </div>
         <div class="col-md-6 mb-4">
-            <div class="card shadow-sm h-100">
+            <div class="card h-100">
                 <div class="card-body">
-                    <h5 class="card-title text-primary">월별 수입/지출 분석</h5>
-                    <canvas id="incomeExpenseChart"></canvas>
+                    <div class="section-header justify-content-center">
+                                                <div class="icon-box"><i class="bi bi-bar-chart-line-fill"></i></div>
+                        <h2 class="card-title h5">월별 수입/지출 분석</h2>
+                    </div>
+                    <div style="height: 300px; position: relative;">
+                        <canvas id="incomeExpenseChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -36,14 +45,17 @@
 
     <div class="row">
         <div class="col-md-12 mb-4">
-            <div class="card shadow-sm">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0">최근 거래 내역</h5>
+            <div class="card">
+                <div class="card-header">
+                    <div class="section-header">
+                                                <div class="icon-box"><i class="bi bi-clock-history"></i></div>
+                        <h2 class="h5 mb-0">최근 거래 내역</h2>
+                    </div>
                 </div>
                 <div class="card-body">
                     {% if recent_transactions %}
                     <div class="table-responsive">
-                        <table class="table table-striped table-hover mb-0">
+                        <table class="table table-hover mb-0">
                             <thead>
                                 <tr>
                                     <th scope="col">ID</th>
@@ -57,7 +69,13 @@
                                 {% for transaction in recent_transactions %}
                                 <tr>
                                     <td>{{ transaction.id }}</td>
-                                    <td>{{ transaction.transaction_type }}</td>
+                                    <td>
+                                        {% if '입금' in transaction.transaction_type %}
+                                            <span class="badge bg-primary bg-opacity-10 text-primary-emphasis">{{ transaction.transaction_type }}</span>
+                                        {% else %}
+                                            <span class="badge bg-danger bg-opacity-10 text-danger-emphasis">{{ transaction.transaction_type }}</span>
+                                        {% endif %}
+                                    </td>
                                     <td>₩ {{ transaction.amount|floatformat:0|intcomma }}</td>
                                     <td>₩ {{ transaction.balance_after|floatformat:0|intcomma }}</td>
                                     <td>{{ transaction.created_at|date:"Y-m-d H:i" }}</td>
@@ -67,7 +85,7 @@
                         </table>
                     </div>
                     {% else %}
-                    <p class="text-muted">최근 거래 내역이 없습니다.</p>
+                    <p class="text-muted text-center p-4">최근 거래 내역이 없습니다.</p>
                     {% endif %}
                 </div>
             </div>
@@ -88,40 +106,42 @@
                 {
                     label: '수입',
                     data: {{ income_data|safe }},
-                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
+                    backgroundColor: 'rgba(58, 134, 255, 0.6)', // Using new primary color
+                    borderColor: 'rgba(58, 134, 255, 1)',
+                    borderWidth: 1,
+                    borderRadius: 6,
+                    hoverBackgroundColor: 'rgba(58, 134, 255, 0.8)'
                 },
                 {
                     label: '지출',
                     data: {{ expense_data|safe }},
                     backgroundColor: 'rgba(255, 99, 132, 0.6)',
                     borderColor: 'rgba(255, 99, 132, 1)',
-                    borderWidth: 1
+                    borderWidth: 1,
+                    borderRadius: 6,
+                    hoverBackgroundColor: 'rgba(255, 99, 132, 0.8)'
                 }
             ]
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             scales: {
                 y: {
                     beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: '금액 (₩)'
-                    }
-                },
-                x: {
-                    title: {
-                        display: true,
-                        text: '월'
+                    ticks: {
+                        callback: function(value, index, values) {
+                            return '₩' + new Intl.NumberFormat().format(value);
+                        }
                     }
                 }
             },
             plugins: {
+                legend: {
+                    position: 'top',
+                },
                 title: {
-                    display: true,
-                    text: '월별 수입 및 지출 분석'
+                    display: false // Title is now in the section header
                 }
             }
         }

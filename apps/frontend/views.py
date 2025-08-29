@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.views.generic import TemplateView
 from django.contrib.auth.decorators import login_required
 from django.contrib import auth, messages
 from apps.accounts.models import Account
@@ -6,9 +7,25 @@ from apps.transaction_history.models import TransactionHistory
 from django.db.models import Sum # Import F for database expressions
 from django.db.models.functions import ExtractMonth # For extracting month from date
 from datetime import datetime, timezone # Import datetime and timezone
-from .forms import LoginForm, RegisterForm, AccountForm, TransactionForm
+from .forms import AccountForm, TransactionForm, LoginForm
+
+def login_page_view(request):
+    # This view only displays the page. The actual login is handled by the API and JS.
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    form = LoginForm()
+    return render(request, 'login.html', {'form': form})
+
 
 # Create your views here.
+
+class MainPageView(TemplateView):
+    template_name = "main.html"
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('dashboard')
+        return super().get(request, *args, **kwargs)
 
 @login_required
 def dashboard_view(request):
@@ -59,33 +76,9 @@ def dashboard_view(request):
     }
     return render(request, 'dashboard.html', context)
 
-def login_view(request):
-    if request.user.is_authenticated:
-        return redirect('dashboard')
 
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            user = form.user_cache
-            auth.login(request, user)
-            return redirect('dashboard')
-    else:
-        form = LoginForm()
-    return render(request, 'login.html', {'form': form})
 
-def register_view(request):
-    if request.user.is_authenticated:
-        return redirect('dashboard')
 
-    if request.method == 'POST':
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            form.save()
-            messages.success(request, '회원가입이 완료되었습니다. 로그인해주세요.')
-            return redirect('login')
-    else:
-        form = RegisterForm()
-    return render(request, 'register.html', {'form': form})
 
 @login_required
 def accounts_list_view(request):

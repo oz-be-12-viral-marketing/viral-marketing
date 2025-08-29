@@ -19,9 +19,10 @@ from django.contrib import admin
 from django.urls import include, path
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
-from apps.users.views import EmailVerificationView, LoginView, LogoutView, RegisterView, UserDetailView, TokenRefreshView
+from apps.users.views import EmailVerificationView, LoginView, LogoutView, UserDetailView, TokenRefreshView
 
 urlpatterns = [
+    path("api/v1/users/login/", LoginView.as_view(), name="api_login"),
     path("", include("apps.frontend.urls")),
     path("admin/", admin.site.urls),
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
@@ -29,10 +30,8 @@ urlpatterns = [
     path("redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
     path("accounts/", include("allauth.urls")),
     path("activate/<uidb64>/<token>/", EmailVerificationView.as_view(), name="activate-user"),
-    path("users/register/", RegisterView.as_view()),
-    path("users/login/", LoginView.as_view()),
     path("users/logout/", LogoutView.as_view()),
-    path("profile/", UserDetailView.as_view(), name="profile"),
+    path("api/v1/users/me/", UserDetailView.as_view(), name="user-detail"),
     path("users/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"), # Added
     path("api/v1/", include("apps.accounts.urls")),
     path("api/v1/", include("apps.transaction_history.urls")),

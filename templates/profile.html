@@ -121,7 +121,7 @@
             } catch (error) {
                 console.error('Error refreshing token:', error);
                 // Redirect to login if token refresh fails
-                window.location.href = '/login/';
+                window.location.href = "{% url 'login' %}";
                 throw error; // Re-throw to stop further execution
             }
         }
@@ -133,7 +133,7 @@
             errorMessageDiv.classList.add('d-none');
 
             try {
-                const response = await fetch('/profile/', {
+                const response = await fetch('/api/v1/users/me/', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -144,7 +144,7 @@
                 if (response.status === 401) {
                     // If 401, try to refresh token and retry request
                     await refreshAccessToken(); // This will set a new HttpOnly access_token
-                    const retryResponse = await fetch('/profile/', {
+                    const retryResponse = await fetch('/api/v1/users/me/', {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',
@@ -215,7 +215,7 @@
             editProfileForm.querySelectorAll('.invalid-feedback').forEach(el => el.remove());
 
             try {
-                const response = await fetch('/profile/', {
+                const response = await fetch('/api/v1/users/me/', {
                     method: 'PATCH', // Use PATCH for partial updates
                     headers: {
                         'Content-Type': 'application/json',
@@ -226,7 +226,7 @@
 
                 if (response.status === 401) {
                     await refreshAccessToken();
-                    const retryResponse = await fetch('/profile/', {
+                    const retryResponse = await fetch('/api/v1/users/me/', {
                         method: 'PATCH',
                         headers: {
                             'Content-Type': 'application/json',
