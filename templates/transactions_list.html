@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}거래 내역{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>거래 내역</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">날짜</th>
+                    <th scope="col">계좌</th>
+                    <th scope="col">유형</th>
+                    <th scope="col">금액</th>
+                    <th scope="col">거래 후 잔액</th>
+                    <th scope="col">상세</th>
+                    <th scope="col">거래 방식</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>2025-08-29</td>
+                    <td>123-456-7890</td>
+                    <td>입금</td>
+                    <td>+₩ 100,000</td>
+                    <td>₩ 1,100,000</td>
+                    <td>월급</td>
+                    <td>계좌이체</td>
+                </tr>
+                <tr>
+                    <td>2025-08-28</td>
+                    <td>123-456-7890</td>
+                    <td>출금</td>
+                    <td>-₩ 25,000</td>
+                    <td>₩ 1,075,000</td>
+                    <td>식비</td>
+                    <td>카드결제</td>
+                </tr>
+                <!-- Add more rows as needed -->
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
