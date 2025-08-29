@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load humanize %}
 
 {% block title %}계좌 목록{% endblock %}
 
@@ -6,10 +7,11 @@
 <div class="row">
     <div class="col-md-12">
         <h1>내 계좌</h1>
+        {% if accounts %}
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th scope="col">은행</th>
+                    <th scope="col">은행 코드</th>
                     <th scope="col">계좌번호</th>
                     <th scope="col">계좌 유형</th>
                     <th scope="col">잔액</th>
@@ -17,23 +19,20 @@
                 </tr>
             </thead>
             <tbody>
+                {% for account in accounts %}
                 <tr>
-                    <td>국민은행</td>
-                    <td>123-456-7890</td>
-                    <td>입출금</td>
-                    <td>₩ 1,000,000</td>
-                    <td>KRW</td>
+                    <td>{{ account.bank_code }}</td>
+                    <td>{{ account.account_number }}</td>
+                    <td>{{ account.account_type }}</td>
+                    <td>₩ {{ account.balance|floatformat:0|intcomma }}</td>
+                    <td>{{ account.currency }}</td>
                 </tr>
-                <tr>
-                    <td>신한은행</td>
-                    <td>987-654-3210</td>
-                    <td>적금</td>
-                    <td>₩ 500,000</td>
-                    <td>KRW</td>
-                </tr>
-                <!-- Add more rows as needed -->
+                {% endfor %}
             </tbody>
         </table>
+        {% else %}
+        <p>등록된 계좌가 없습니다.</p>
+        {% endif %}
         <button class="btn btn-primary">새 계좌 추가</button>
     </div>
 </div>

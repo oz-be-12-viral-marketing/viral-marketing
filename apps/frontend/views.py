@@ -1,14 +1,14 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib import auth # Import auth module
+from django.contrib import auth
 from apps.accounts.models import Account
 from apps.transaction_history.models import TransactionHistory
 from django.db.models import Sum
-from .forms import LoginForm, RegisterForm # Import the new forms
+from .forms import LoginForm, RegisterForm
 
 # Create your views here.
 
-@login_required # Ensure user is logged in to access dashboard
+@login_required
 def dashboard_view(request):
     user_accounts = Account.objects.filter(user=request.user)
     total_balance = user_accounts.aggregate(Sum('balance'))['balance__sum'] or 0
@@ -30,7 +30,7 @@ def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
-            user = form.user_cache # User is stored in form.user_cache by clean method
+            user = form.user_cache
             auth.login(request, user)
             return redirect('dashboard')
     else:
@@ -45,15 +45,23 @@ def register_view(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('login') # Redirect to login after successful registration
+            return redirect('login')
     else:
         form = RegisterForm()
     return render(request, 'register.html', {'form': form})
 
 @login_required
 def accounts_list_view(request):
-    return render(request, 'accounts_list.html')
+    accounts = Account.objects.filter(user=request.user).order_by('id')
+    context = {
+        'accounts': accounts
+    }
+    return render(request, 'accounts_list.html', context)
 
 @login_required
 def transactions_list_view(request):
-    return render(request, 'transactions_list.html')
+    transactions = TransactionHistory.objects.filter(account__user=request.user).order_by('-id')
+    context = {
+        'transactions': transactions
+    }
+    return render(request, 'transactions_list.html', context)
