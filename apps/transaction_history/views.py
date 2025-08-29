@@ -5,6 +5,18 @@ from .serializers import TransactionHistorySerializer
 from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
 from rest_framework import status # Import status for examples
 
+class TransactionHistoryFilter(filters.FilterSet):
+    """
+    Filter for TransactionHistory
+    """
+    transaction_type = filters.CharFilter(field_name='transaction_type', lookup_expr='iexact')
+    amount = filters.NumberFilter(field_name='amount', lookup_expr='exact')
+    amount__gt = filters.NumberFilter(field_name='amount', lookup_expr='gt')
+    amount__lt = filters.NumberFilter(field_name='amount', lookup_expr='lt')
+
+    class Meta:
+        model = TransactionHistory
+        fields = ['transaction_type', 'amount', 'amount__gt', 'amount__lt']
 
 @extend_schema(
     description="API for managing transaction history. Provides CRUD operations for transactions associated with the authenticated user's accounts.",
@@ -88,6 +100,27 @@ class TransactionHistoryViewSet(viewsets.ModelViewSet):
         for the accounts owned by the currently authenticated user.
         """
         return TransactionHistory.objects.filter(account__user=self.request.user)
+
+    def perform_create(self, serializer):
+        """
+        Create a new transaction history and update the account balance.
+        """
+        # Note: This is a simplified example. In a real-world scenario,
+        # you would want to handle this within a database transaction
+        # to ensure data integrity.
+        account = serializer.validated_data['account']
+        amount = serializer.validated_data['amount']
+        transaction_type = serializer.validated_data['transaction_type']
+
+        if transaction_type == 'DEPOSIT':
+            account.balance += amount
+        elif transaction_type == 'WITHDRAW':
+            if account.balance < amount:
+                raise serializers.ValidationError("Insufficient funds.")
+            account.balance -= amount
+        
+        account.save()
+        serializer.save(balance_after=account.balance)
 
     @extend_schema(
         summary="Create a new transaction",
