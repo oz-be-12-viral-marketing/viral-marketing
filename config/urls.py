@@ -18,21 +18,23 @@ Including another URLconf
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
+from django.contrib.auth.views import LogoutView as DjangoLogoutView
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
-from apps.users.views import EmailVerificationView, LoginView, LogoutView, RegisterView, UserDetailView
+from apps.users.views import EmailVerificationView, LoginView, UserDetailView, TokenRefreshView
 
 urlpatterns = [
+    path("api/v1/users/login/", LoginView.as_as_view(), name="api_login"),
+    path("", include("apps.frontend.urls")),
     path("admin/", admin.site.urls),
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
     path("swagger/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
     path("redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
     path("accounts/", include("allauth.urls")),
     path("activate/<uidb64>/<token>/", EmailVerificationView.as_view(), name="activate-user"),
-    path("users/register/", RegisterView.as_view()),
-    path("users/login/", LoginView.as_view()),
-    path("users/logout/", LogoutView.as_view()),
-    path("users/detail/", UserDetailView.as_view(), name="user-detail"),
+    path("users/logout/", DjangoLogoutView.as_view(next_page='logged_out'), name="logout"),
+    path("api/v1/users/me/", UserDetailView.as_view(), name="user-detail"),
+    path("users/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"), # Added
     path("api/v1/", include("apps.accounts.urls")),
     path("api/v1/", include("apps.transaction_history.urls")),
 ]
