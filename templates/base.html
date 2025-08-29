@@ -19,64 +19,57 @@
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
     {% block extra_head %}{% endblock %}
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-white">
-        <div class="container-fluid">
-            {% if user.is_authenticated %}
-                <a class="navbar-brand" href="{% url 'dashboard' %}">가계부</a>
-            {% else %}
-                <a class="navbar-brand" href="{% url 'main' %}">가계부</a>
-            {% endif %}
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+        <!-- Left side (empty or minimal) -->
+        <div></div> 
+
+        <!-- Centered Title -->
+        <a class="navbar-brand mx-auto" href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'main' %}{% endif %}">
+            OZ BANK 가계부
+        </a>
+
+        <!-- Right side (Dropdown Menu) -->
+        <div class="dropdown">
+            <button class="btn btn-link nav-link dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-list fs-4"></i> <!-- Hamburger icon -->
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        {% if user.is_authenticated %}
-                            <a class="nav-link active" aria-current="page" href="{% url 'dashboard' %}">홈</a>
-                        {% else %}
-                            <a class="nav-link active" aria-current="page" href="{% url 'main' %}">홈</a>
-                        {% endif %}
-                    </li>
-                    {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'accounts_list' %}">계좌</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'transactions_list' %}">거래내역</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'profile' %}">환영합니다, {{ user.nickname }}님!</a>
-                    </li>
-                    <li class="nav-item ms-2">
-                        <form action="/users/logout/" method="post">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-outline-primary btn-sm">로그아웃</button>
-                        </form>
-                    </li>
-                    {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'login' %}">로그인</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'account_signup' %}">회원가입</a>
-                    </li>
-                    {% endif %}
-                </ul>
-            </div>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                {% if user.is_authenticated %}
+                <li><a class="dropdown-item {% if request.path == '/dashboard/' %}active{% endif %}" href="{% url 'dashboard' %}">홈</a></li>
+                <li><a class="dropdown-item {% if request.path == '/accounts/' %}active{% endif %}" href="{% url 'accounts_list' %}">계좌</a></li>
+                <li><a class="dropdown-item {% if request.path == '/transactions/' %}active{% endif %}" href="{% url 'transactions_list' %}">거래내역</a></li>
+                <li><a class="dropdown-item {% if request.path == '/profile/' %}active{% endif %}" href="{% url 'profile' %}">프로필</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <form action="/users/logout/" method="post" class="dropdown-item">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-link text-danger p-0 m-0 border-0 logout-button">로그아웃</button>
+                    </form>
+                </li>
+                {% else %}
+                <li><a class="dropdown-item" href="{% url 'login' %}">로그인</a></li>
+                <li><a class="dropdown-item" href="{% url 'account_signup' %}">회원가입</a></li>
+                {% endif %}
+            </ul>
         </div>
-    </nav>
+    </div>
+</nav>
 
     <main class="container mt-4">
         {% block content %}
         {% endblock %}
     </main>
 
-    <footer class="footer mt-auto py-3 bg-light">
+    <footer class="footer mt-auto py-3">
         <div class="container">
             <span class="text-muted">&copy; 2025 가계부 시스템. All rights reserved.</span>
         </div>
@@ -87,3 +80,25 @@
     {% block extra_js %}{% endblock %}
 </body>
 </html>
+{% if user.is_authenticated %}
+<nav class="navbar fixed-bottom navbar-dark d-lg-none shadow-lg">
+    <div class="container-fluid justify-content-around">
+        <a class="nav-link text-center" href="{% url 'dashboard' %}">
+            <i class="bi bi-house-door-fill d-block fs-4"></i>
+            <small>홈</small>
+        </a>
+        <a class="nav-link text-center" href="{% url 'accounts_list' %}">
+            <i class="bi bi-wallet-fill d-block fs-4"></i>
+            <small>계좌</small>
+        </a>
+        <a class="nav-link text-center" href="{% url 'transactions_list' %}">
+            <i class="bi bi-receipt-cutoff d-block fs-4"></i>
+            <small>거래내역</small>
+        </a>
+        <a class="nav-link text-center" href="{% url 'profile' %}">
+            <i class="bi bi-person-circle d-block fs-4"></i>
+            <small>프로필</small>
+        </a>
+    </div>
+</nav>
+{% endif %}

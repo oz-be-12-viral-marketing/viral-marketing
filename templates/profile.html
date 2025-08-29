@@ -3,7 +3,7 @@
 {% block title %}내 프로필{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="container mt-5 animate__animated animate__fadeInUp">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
@@ -80,8 +80,16 @@
         const userDetailsDiv = document.getElementById('user-details');
         const errorMessageDiv = document.getElementById('error-message');
         const editProfileBtn = document.getElementById('edit-profile-btn');
-        const editProfileModal = new bootstrap.Modal(document.getElementById('editProfileModal'));
+        const editProfileModalElement = document.getElementById('editProfileModal'); // Get the modal element
+        const editProfileModal = new bootstrap.Modal(editProfileModalElement); // Initialize Bootstrap modal
         const editProfileForm = document.getElementById('editProfileForm');
+
+        // Add event listener for modal hidden event
+        if (editProfileModalElement && editProfileBtn) {
+            editProfileModalElement.addEventListener('hidden.bs.modal', function () {
+                editProfileBtn.focus(); // Return focus to the button that opened the modal
+            });
+        }
 
         // Function to get cookie by name (only for non-HttpOnly cookies like csrftoken)
         function getCookie(name) {

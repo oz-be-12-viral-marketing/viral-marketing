@@ -4,11 +4,11 @@
 {% block title %}계좌 목록{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="container mt-5 animate__animated animate__fadeInUp">
     <div class="row">
         <div class="col-md-12">
             <div class="card shadow-sm">
-                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">내 계좌</h5>
                     <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addAccountModal">
                         <i class="bi bi-plus-circle me-1"></i> 새 계좌 추가
@@ -42,7 +42,7 @@
                                 <tr>
                                     <td>{{ account.bank_code }}</td>
                                     <td>{{ account.account_number }}</td>
-                                    <td>{{ account.account_type }}</td>
+                                    <td>{{ account.get_account_type_display }}</td>
                                     <td>₩ {{ account.balance|floatformat:0|intcomma }}</td>
                                     <td>{{ account.currency }}</td>
                                 </tr>
@@ -103,6 +103,15 @@
     {% endif %}
 
     document.addEventListener('DOMContentLoaded', function() {
+        const addAccountModalElement = document.getElementById('addAccountModal');
+        const addAccountButton = document.querySelector('[data-bs-target="#addAccountModal"]'); // The button that opens the modal
+
+        if (addAccountModalElement && addAccountButton) {
+            addAccountModalElement.addEventListener('hidden.bs.modal', function () {
+                addAccountButton.focus(); // Return focus to the button that opened the modal
+            });
+        }
+
         const addAccountForm = document.querySelector('#addAccountModal form');
         addAccountForm.setAttribute('novalidate', ''); // Disable default browser validation
 

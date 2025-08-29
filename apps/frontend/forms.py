@@ -56,7 +56,7 @@ class RegisterForm(forms.ModelForm):
 class AccountForm(forms.ModelForm):
     bank_code = forms.ChoiceField(choices=BANK_CODES, widget=forms.Select(attrs={'class': 'form-select'}))
     account_number = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '계좌번호'}), label='계좌번호')
-    account_type = forms.ChoiceField(choices=ACCOUNT_TYPE, widget=forms.Select(attrs={'class': 'form-control'}))
+    account_type = forms.ChoiceField(choices=ACCOUNT_TYPE, widget=forms.Select(attrs={'class': 'form-control'}), label='유형')
     currency = forms.ChoiceField(choices=CURRENCIES, widget=forms.Select(attrs={'class': 'form-select'}))
     
     class Meta:

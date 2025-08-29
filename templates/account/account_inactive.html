@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "비활성화된 계정" %}{% endblock %}
+
+{% block content %}
+<div class="container mt-5 animate__animated animate__fadeInUp">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg text-center">
+                <div class="card-header">
+                    <h3 class="mb-0">{% trans "비활성화된 계정" %}</h3>
+                </div>
+                <div class="card-body p-4">
+                    <p>{% trans "이 계정은 현재 비활성화 상태입니다." %}</p>
+                    <p class="text-muted">{% trans "이메일 인증을 완료했는지 확인하거나, 관리자에게 문의하세요." %}</p>
+                    <div class="d-grid gap-2 mt-4">
+                        <a href="{% url 'main' %}" class="btn btn-secondary btn-lg">{% trans "메인 페이지로 돌아가기" %}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

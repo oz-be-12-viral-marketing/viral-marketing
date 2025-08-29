@@ -4,7 +4,7 @@
 {% block title %}거래 내역{% endblock %}
 
 {% block content %}
-<div class="row">
+<div class="row animate__animated animate__fadeInUp">
     <div class="col-md-12">
         <h1>거래 내역</h1>
 
@@ -36,11 +36,11 @@
                 <tr>
                     <td>{{ transaction.id }}</td>
                     <td>{{ transaction.account.account_number }}</td> {# Access related account's number #}
-                    <td>{{ transaction.transaction_type }}</td>
+                    <td>{{ transaction.get_transaction_type_display }}</td>
                     <td>₩ {{ transaction.amount|floatformat:0|intcomma }}</td>
                     <td>₩ {{ transaction.balance_after|floatformat:0|intcomma }}</td>
                     <td>{{ transaction.transaction_detail|default:"-" }}</td> {# Display "-" if detail is empty #}
-                    <td>{{ transaction.transaction_method }}</td>
+                    <td>{{ transaction.get_transaction_method_display }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -100,6 +100,15 @@
     {% endif %}
 
     document.addEventListener('DOMContentLoaded', function() {
+        const addTransactionModalElement = document.getElementById('addTransactionModal');
+        const addTransactionButton = document.querySelector('[data-bs-target="#addTransactionModal"]'); // The button that opens the modal
+
+        if (addTransactionModalElement && addTransactionButton) {
+            addTransactionModalElement.addEventListener('hidden.bs.modal', function () {
+                addTransactionButton.focus(); // Return focus to the button that opened the modal
+            });
+        }
+
         const addTransactionForm = document.querySelector('#addTransactionModal form');
         addTransactionForm.setAttribute('novalidate', ''); // Disable default browser validation
 

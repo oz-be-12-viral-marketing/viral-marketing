@@ -71,9 +71,9 @@
                                     <td>{{ transaction.id }}</td>
                                     <td>
                                         {% if '입금' in transaction.transaction_type %}
-                                            <span class="badge bg-primary bg-opacity-10 text-primary-emphasis">{{ transaction.transaction_type }}</span>
+                                            <span class="badge bg-primary bg-opacity-10 text-primary-emphasis">{{ transaction.get_transaction_type_display }}</span>
                                         {% else %}
-                                            <span class="badge bg-danger bg-opacity-10 text-danger-emphasis">{{ transaction.transaction_type }}</span>
+                                            <span class="badge bg-danger bg-opacity-10 text-danger-emphasis">{{ transaction.get_transaction_type_display }}</span>
                                         {% endif %}
                                     </td>
                                     <td>₩ {{ transaction.amount|floatformat:0|intcomma }}</td>
@@ -139,6 +139,9 @@
             plugins: {
                 legend: {
                     position: 'top',
+                    labels: {
+                        color: '#FFFFFF' // Set legend text color to pure white
+                    }
                 },
                 title: {
                     display: false // Title is now in the section header

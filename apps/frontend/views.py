@@ -138,3 +138,7 @@ def profile_view(request):
 
 def logged_out_view(request):
     return render(request, 'logged_out.html')
+
+@login_required
+def signup_complete_view(request):
+    return render(request, 'account/signup_complete.html')

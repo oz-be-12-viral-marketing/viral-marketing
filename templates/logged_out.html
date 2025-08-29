@@ -3,7 +3,7 @@
 {% block title %}로그아웃됨{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="container mt-5 animate__animated animate__fadeInUp">
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card shadow-lg">
@@ -12,7 +12,7 @@
                 </div>
                 <div class="card-body p-4 text-center">
                     <p class="lead">성공적으로 로그아웃되었습니다.</p>
-                    <a href="{% url 'login' %}" class="btn btn-primary mt-3">다시 로그인</a>
+                    <a href="{% url 'main' %}" class="btn btn-primary mt-3">메인 페이지로 이동</a>
                 </div>
             </div>
         </div>

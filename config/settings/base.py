@@ -89,11 +89,14 @@ ACCOUNT_LOGOUT_REDIRECT_URL = "/"
 ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = 'none'
-ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+ACCOUNT_SIGNUP_FIELDS = ("email", "password1", "password2")
 ACCOUNT_FORMS = {
     'signup': 'apps.users.forms.CustomSignupForm',
 }
+ACCOUNT_SIGNUP_REDIRECT_URL = "/accounts/signup/complete/"
+ACCOUNT_AUTHENTICATE_ON_REGISTRATION = True
 
 
 
@@ -165,7 +168,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "ko-kr"
 
 TIME_ZONE = "UTC"
 
