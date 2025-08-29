@@ -3,7 +3,6 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from apps.users.models import CustomUser
 from apps.accounts.models import Account
-from apps.accounts.serializers import AccountSerializer
 
 class AccountViewSetTestCase(APITestCase):
     def setUp(self):
@@ -50,7 +49,6 @@ class AccountViewSetTestCase(APITestCase):
     def test_list_accounts(self):
         """계좌 목록 조회 테스트"""
         response = self.client.get(self.url)
-        accounts = Account.objects.filter(user=self.user)
         # Serializer의 context에 request를 포함시켜야 할 수 있습니다.
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # response.data는 OrderedDict를 포함할 수 있으므로, 직접 비교보다는 주요 값을 확인합니다.
