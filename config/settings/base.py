@@ -33,6 +33,8 @@ DJANGO_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sites",
+    "django_celery_beat",
+    "django_celery_results",
 ]
 
 CUSTOM_APPS = [
@@ -89,9 +91,8 @@ ACCOUNT_LOGIN_METHODS = ["email"]
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_FORMS = {
-    'signup': 'apps.users.forms.CustomSignupForm',
+    "signup": "apps.users.forms.CustomSignupForm",
 }
-
 
 
 SOCIALACCOUNT_PROVIDERS = {

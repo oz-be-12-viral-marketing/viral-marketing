@@ -34,4 +34,5 @@ urlpatterns = [
     path("users/detail/", UserDetailView.as_view(), name="user-detail"),
     path("api/v1/", include("apps.accounts.urls")),
     path("api/v1/", include("apps.transaction_history.urls")),
+    path("api/analysis/", include("apps.analysis.urls")),
 ]
