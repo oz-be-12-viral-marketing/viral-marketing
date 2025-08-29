@@ -1,4 +1,5 @@
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, status, serializers
+from rest_framework.response import Response
 from django_filters import rest_framework as filters
 from .models import TransactionHistory
 from .serializers import TransactionHistorySerializer
@@ -31,3 +32,24 @@ class TransactionHistoryViewSet(viewsets.ModelViewSet):
         for the accounts owned by the currently authenticated user.
         """
         return TransactionHistory.objects.filter(account__user=self.request.user)
+
+    def perform_create(self, serializer):
+        """
+        Create a new transaction history and update the account balance.
+        """
+        # Note: This is a simplified example. In a real-world scenario,
+        # you would want to handle this within a database transaction
+        # to ensure data integrity.
+        account = serializer.validated_data['account']
+        amount = serializer.validated_data['amount']
+        transaction_type = serializer.validated_data['transaction_type']
+
+        if transaction_type == 'DEPOSIT':
+            account.balance += amount
+        elif transaction_type == 'WITHDRAW':
+            if account.balance < amount:
+                raise serializers.ValidationError("Insufficient funds.")
+            account.balance -= amount
+        
+        account.save()
+        serializer.save(balance_after=account.balance)
