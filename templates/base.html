@@ -50,7 +50,7 @@
                 <li><a class="dropdown-item {% if request.path == '/profile/' %}active{% endif %}" href="{% url 'profile' %}">프로필</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li>
-                    <form action="/users/logout/" method="post" class="dropdown-item">
+                    <form action="{% url 'logout' %}" method="post" class="dropdown-item">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-link text-danger p-0 m-0 border-0 logout-button">로그아웃</button>
                     </form>
