@@ -1,25 +1,32 @@
 {% extends 'base.html' %}
+{% load humanize %}
 
 {% block title %}대시보드{% endblock %}
 
 {% block content %}
 <div class="row">
     <div class="col-md-12">
-        <h1>환영합니다, 사용자님!</h1>
+        <h1>환영합니다, {{ user.nickname }}님!</h1> {# Use user.nickname from request.user #}
         <p>가계부 시스템 대시보드입니다.</p>
-        <div class="card">
+        <div class="card mb-4"> {# Added mb-4 for margin-bottom #}
             <div class="card-body">
                 <h5 class="card-title">총 잔액</h5>
-                <p class="card-text display-4">₩ 1,234,567</p>
+                <p class="card-text display-4">₩ {{ total_balance|floatformat:0|intcomma }}</p> {# Format as currency #}
             </div>
         </div>
         <div class="mt-4">
             <h2>최근 거래 내역</h2>
+            {% if recent_transactions %}
             <ul class="list-group">
-                <li class="list-group-item">2025-08-29 - 식비: -₩ 15,000</li>
-                <li class="list-group-item">2025-08-28 - 급여: +₩ 1,000,000</li>
-                <li class="list_group-item">2025-08-27 - 교통비: -₩ 2,500</li>
+                {% for transaction in recent_transactions %}
+                <li class="list-group-item">
+                    {{ transaction.id }} - {{ transaction.transaction_type }} - ₩ {{ transaction.amount|floatformat:0|intcomma }} (잔액: ₩ {{ transaction.balance_after|floatformat:0|intcomma }})
+                </li>
+                {% endfor %}
             </ul>
+            {% else %}
+            <p>최근 거래 내역이 없습니다.</p>
+            {% endif %}
         </div>
     </div>
 </div>
