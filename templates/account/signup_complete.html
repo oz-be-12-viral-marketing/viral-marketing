@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "회원가입 완료" %}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg text-center">
+                <div class="card-body p-5">
+                    <div class="icon-box mx-auto mb-4" style="width: 60px; height: 60px;">
+                        <i class="bi bi-check-lg" style="font-size: 2rem;"></i>
+                    </div>
+                    <h3 class="mb-3">{% trans "회원가입을 환영합니다!" %}</h3>
+                    <p class="text-muted">이제 모든 기능을 이용하실 수 있습니다.</p>
+                    <div class="d-grid gap-2 mt-4">
+                        <a href="{% url 'dashboard' %}" class="btn btn-primary btn-lg">대시보드로 이동</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

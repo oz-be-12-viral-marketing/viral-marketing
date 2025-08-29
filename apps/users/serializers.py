@@ -33,9 +33,26 @@ class LoginSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)
 
     def validate(self, attrs):
-        user = authenticate(email=attrs.get("email"), password=attrs.get("password"))
-        if not user:
-            raise serializers.ValidationError("Invalid credentials")
+        email = attrs.get("email")
+        password = attrs.get("password")
+
+        if not email or not password:
+            raise serializers.ValidationError("이메일과 비밀번호를 모두 입력해주세요.")
+
+        # Try to authenticate the user
+        user = authenticate(username=email, password=password)
+
+        if user is None:
+            # Check if user exists but is inactive
+            try:
+                user_obj = get_user_model().objects.get(email=email)
+                if not user_obj.is_active:
+                    raise serializers.ValidationError("비활성화된 계정입니다.")
+            except get_user_model().DoesNotExist:
+                pass # User does not exist, so it's an invalid credential
+
+            raise serializers.ValidationError("이메일 또는 비밀번호가 올바르지 않습니다.")
+        
         attrs["user"] = user
         return attrs
 
@@ -49,3 +66,17 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ["id", "email", "name", "nickname", "phone_number"]
         read_only_fields = ["email"]
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name)
+        instance.nickname = validated_data.get('nickname', instance.nickname)
+
+        # Handle unique, nullable field to avoid IntegrityError with empty strings
+        phone_number = validated_data.get('phone_number', instance.phone_number)
+        if phone_number == '':
+            instance.phone_number = None
+        else:
+            instance.phone_number = phone_number
+
+        instance.save()
+        return instance

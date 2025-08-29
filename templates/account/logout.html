@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "로그아웃" %}{% endblock %}
+
+{% block content %}
+<div class="container mt-5 animate__animated animate__fadeInUp">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-header text-center">
+                    <h3 class="mb-0">{% trans "로그아웃" %}</h3>
+                </div>
+                <div class="card-body p-4 text-center">
+                    <p>{% trans "정말로 로그아웃 하시겠습니까?" %}</p>
+                    <form method="post" action="{% url 'account_logout' %}">
+                        {% csrf_token %}
+                        {% if redirect_field_value %}
+                            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+                        {% endif %}
+                        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mt-4">
+                            <button type="submit" class="btn btn-danger btn-lg">{% trans '로그아웃' %}</button>
+                            <a href="{% url 'dashboard' %}" class="btn btn-secondary btn-lg">{% trans '취소' %}</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

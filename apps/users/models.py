@@ -11,7 +11,7 @@ class CustomUserManager(BaseUserManager):
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         if "is_active" not in extra_fields:
-            user.is_active = False  # 이메일 인증 후 활성화
+            user.is_active = True  # 이메일 인증 후 활성화
         user.save(using=self._db)
         return user
 
@@ -28,7 +28,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     # password = models.CharField(max_length=128) AbstractBaseUser에 이미 포함
     name = models.CharField(max_length=50)
     nickname = models.CharField(max_length=25, unique=True)
-    phone_number = models.CharField(max_length=20, unique=True)
+    phone_number = models.CharField(max_length=20, unique=True, null=True, blank=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
     last_login = models.DateTimeField(auto_now=True)

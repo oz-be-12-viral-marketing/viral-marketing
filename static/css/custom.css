@@ -1,0 +1,315 @@
+/* viral-marketing-feature-test/static/css/custom.css */
+
+:root {
+    --bs-primary: #5271FF; /* Brighter blue for Toss-like feel */
+    --bs-primary-rgb: 82, 113, 255;
+    --bs-body-bg: #1a1a1a; /* Dark background */
+    --bs-body-color: #f8f9fa; /* Light text color */
+    --bs-secondary-color: #adb5bd; /* Muted light gray for secondary text */
+    --bs-border-color: #343a40; /* Darker borders */
+    --bs-card-bg: #212529; /* Dark card background */
+    --bs-primary-light-rgb: 82, 113, 255, 0.1; /* For active nav link */
+}
+
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color); /* Apply body text color */
+    padding-bottom: 70px; /* Space for fixed bottom navbar */
+    background-image: linear-gradient(to bottom right, #212529, var(--bs-body-bg)); /* Subtle dark gradient */
+}
+
+main {
+    flex: 1;
+}
+
+/* Navbar Styles */
+.navbar {
+    border-bottom: 1px solid var(--bs-border-color);
+    box-shadow: 0 0.05rem 0.1rem rgba(0,0,0,0.2); /* Darker shadow for dark theme */
+    background-color: var(--bs-card-bg); /* Dark navbar background */
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+.navbar-nav .nav-link { /* General nav-link styling */
+    padding: 0.5rem 1rem; /* Default Bootstrap padding */
+    color: var(--bs-secondary-color); /* Muted light color */
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out;
+}
+
+.navbar-nav .nav-link:hover {
+    color: var(--bs-body-color); /* Lighter on hover */
+}
+
+.navbar-nav .nav-link.active {
+    color: var(--bs-primary) !important;
+    background-color: rgba(var(--bs-primary-light-rgb));
+    border-radius: 0.5rem;
+    font-weight: 600;
+}
+
+.logout-button {
+    /* Mimic nav-link */
+    background: none;
+    border: none;
+    padding: 0.5rem 1rem; /* Match nav-link padding */
+    color: var(--bs-secondary-color); /* Match nav-link color */
+    cursor: pointer;
+    font-size: 1rem; /* Match nav-link font size */
+    font-weight: 400; /* Match nav-link font weight */
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out;
+}
+
+.logout-button:hover {
+    color: var(--bs-body-color); /* Match nav-link hover color */
+}
+
+/* Card Styles */
+.card {
+    border: none;
+    border-radius: 0.75rem;
+    box-shadow: 0 0.25rem 0.5rem rgba(0,0,0,0.2); /* Darker shadow for dark theme */
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-header {
+    background-color: transparent;
+    border-bottom: none; /* Removed border-bottom */
+    font-weight: 700;
+    font-size: 1.25rem;
+    padding: 1.25rem 1.5rem; /* Consistent padding */
+    border-top-left-radius: 0.75rem;
+    border-top-right-radius: 0.75rem;
+    color: var(--bs-body-color); /* Ensure header text is light */
+}
+
+/* Form Control Styles */
+.form-control {
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--bs-border-color); /* Darker border */
+    background-color: var(--bs-card-bg); /* Dark input background */
+    color: var(--bs-body-color); /* Light input text */
+}
+
+input.form-control:focus,
+select.form-control:focus,
+textarea.form-control:focus {
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25) !important; /* Subtle primary glow */
+    border-color: var(--bs-primary); /* Highlight border with primary color */
+    background-color: #FFFFFF !important; /* Force white background */
+    color: #212529 !important; /* Force dark text */
+}
+
+/* Button Styles */
+.btn-primary {
+    background-image: none; /* Removed gradient */
+    background-color: var(--bs-primary); /* Solid primary color */
+    border: none;
+    font-weight: 600;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0.1rem 0.2rem rgba(0,0,0,0.2); /* Darker shadow */
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 0.2rem 0.4rem rgba(0,0,0,0.3); /* Darker shadow on hover */
+}
+
+/* Table Styles */
+.table {
+    vertical-align: middle;
+    color: var(--bs-body-color); /* Ensure table text is light */
+}
+
+.table th {
+    font-weight: 600;
+    color: var(--bs-secondary-color); /* Muted light color for headers */
+}
+
+.table td {
+    word-break: break-word;
+    color: var(--bs-body-color) !important; /* Force light color */
+}
+
+/* Icon & Header Styles */
+.icon-box {
+    width: 48px;
+    height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(var(--bs-primary-light-rgb));
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.icon-box .bi {
+    font-size: 1.75rem;
+    color: var(--bs-primary);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.section-header h2 {
+    margin-bottom: 0;
+    color: var(--bs-body-color); /* Ensure header text is light */
+}
+
+/* Footer Styles */
+footer.footer {
+    background-color: var(--bs-card-bg); /* Dark footer background */
+    border-top: 1px solid var(--bs-border-color);
+    padding: 1rem 0;
+    text-align: center;
+    color: var(--bs-secondary-color); /* Light text color */
+}
+
+/* Logo Styles */
+.oz-bank-logo {
+    font-size: 4.5rem;
+    letter-spacing: 0.12em;
+    font-weight: 900;
+    background: linear-gradient(45deg, var(--bs-primary), #00c6ff, #8a2be2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
+    display: inline-block;
+    position: relative; /* For animation */
+}
+
+@keyframes pulse-shadow {
+    0% {
+        text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
+    }
+    100% {
+        text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+    }
+}
+
+/* Small Logo for Navbar */
+.oz-bank-logo-small {
+    font-size: 1.5rem;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+    background: linear-gradient(45deg, var(--bs-primary), #00c6ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Darker shadow */
+    display: inline-block;
+}
+
+/* Bottom Navbar Styles */
+.navbar.fixed-bottom {
+    border-top: 1px solid var(--bs-border-color);
+    box-shadow: 0 -0.05rem 0.1rem rgba(0,0,0,0.2); /* More subtle shadow */
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    background-color: var(--bs-card-bg); /* Dark background */
+}
+
+.navbar.fixed-bottom .nav-link {
+    color: var(--bs-body-color); /* Changed to light text for better visibility */
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
+    transition: color 0.2s, background-color 0.2s;
+}
+
+.navbar.fixed-bottom .nav-link:hover {
+    color: var(--bs-primary); /* Primary color on hover */
+    background-color: rgba(var(--bs-primary-light-rgb));
+}
+
+.navbar.fixed-bottom .nav-link.active {
+    color: var(--bs-primary) !important;
+    background-color: rgba(var(--bs-primary-light-rgb));
+}
+
+.navbar.fixed-bottom .nav-link i {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+}
+
+/* Specific overrides for dark theme */
+.text-muted {
+    color: var(--bs-secondary-color) !important;
+}
+
+.alert-danger {
+    color: #dc3545; /* Bootstrap red */
+    background-color: rgba(220, 53, 69, 0.2); /* Light red background */
+    border-color: rgba(220, 53, 69, 0.3); /* Red border */
+}
+
+.alert-success {
+    color: #198754; /* Bootstrap green */
+    background-color: rgba(25, 135, 84, 0.2); /* Light green background */
+    border-color: rgba(25, 135, 84, 0.3); /* Green border */
+}
+
+/* Adjust social login buttons for dark theme */
+.btn-light.border {
+    background-color: var(--bs-card-bg);
+    border-color: var(--bs-border-color) !important;
+    color: var(--bs-body-color);
+}
+
+.btn-light.border:hover {
+    background-color: var(--bs-border-color);
+    color: var(--bs-body-color);
+}
+
+.btn-warning.text-dark {
+    color: var(--bs-body-color) !important;
+}
+
+.btn-warning.text-dark:hover {
+    color: var(--bs-body-color) !important;
+}
+
+/* Adjust badge colors for dark theme */
+.badge.bg-primary.bg-opacity-10 {
+    background-color: rgba(var(--bs-primary-rgb), 0.2) !important;
+    color: var(--bs-primary) !important;
+}
+
+.badge.bg-danger.bg-opacity-10 {
+    background-color: rgba(220, 53, 69, 0.2) !important;
+    color: #dc3545 !important;
+}
+
+/* Dropdown menu item hover/focus styles */
+.dropdown-item:hover,
+.dropdown-item:focus {
+    background-color: rgba(var(--bs-primary-rgb), 0.2) !important; /* A light blue background */
+    color: var(--bs-primary) !important; /* Primary color for text */
+}
+
+.dropdown-item.active {
+    background-color: var(--bs-primary) !important; /* Solid primary for active */
+    color: white !important; /* White text for active */
+}
+
+/* Chart.js colors for dark theme */
+/* These are already defined in dashboard.html, but if they were in CSS, they'd be here */
+/* Example: background-color: rgba(58, 134, 255, 0.6) -> rgba(82, 113, 255, 0.6) */
+/* Example: background-color: rgba(255, 99, 132, 0.6) -> rgba(255, 99, 132, 0.6) (red is fine) */

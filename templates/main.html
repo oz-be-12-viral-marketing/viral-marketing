@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}가계부 시스템에 오신 것을 환영합니다{% endblock %}
+
+{% block content %}
+<div class="main-content-wrapper">
+    <div class="container text-center py-5">
+        <!-- OZ BANK Logo/Title -->
+        <h1 class="display-3 fw-bold text-primary animate__animated animate__fadeInDown mb-5 oz-bank-logo">OZ BANK</h1>
+
+        <!-- Existing Content -->
+        <h2 class="display-4 fw-bold animate__animated animate__fadeInUp">똑똑한 소비의 시작</h2>
+        <p class="lead text-muted my-4 animate__animated animate__fadeInUp animate__delay-1s">가계부 시스템으로 당신의 자산을 관리하고, 현명한 소비 습관을 만들어보세요.</p>
+        
+        <!-- Button (moved down) -->
+        <div class="mt-5 pt-5">
+            <a href="{% url 'login' %}" class="btn btn-primary btn-lg animate__animated animate__fadeInUp animate__delay-2s">로그인하고 시작하기</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
