@@ -10,13 +10,15 @@ class CustomUserManager(BaseUserManager):
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
-        user.is_active = False  # 이메일 인증 후 활성화
+        if "is_active" not in extra_fields:
+            user.is_active = False  # 이메일 인증 후 활성화
         user.save(using=self._db)
         return user
 
     def create_superuser(self, email, password=None, **extra_fields):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
+        extra_fields.setdefault("is_active", True)
         return self.create_user(email, password, **extra_fields)
 
 
