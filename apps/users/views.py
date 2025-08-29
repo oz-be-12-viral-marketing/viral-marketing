@@ -14,6 +14,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenRefreshView as SimpleJWTRefreshView # Added
 from django.shortcuts import redirect
+from rest_framework_simplejwt.serializers import TokenRefreshSerializer
 
 from apps.users.serializers import (
     EmailVerificationSerializer,
@@ -130,7 +131,7 @@ class LogoutView(GenericAPIView):
         return response
 
 
-from rest_framework_simplejwt.serializers import TokenRefreshSerializer
+
 
 
 class TokenRefreshView(SimpleJWTRefreshView):

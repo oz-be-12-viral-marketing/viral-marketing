@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView
 from django.contrib.auth.decorators import login_required
-from django.contrib import auth, messages
+from django.contrib import messages
 from apps.accounts.models import Account
 from apps.transaction_history.models import TransactionHistory
 from django.db.models import Sum # Import F for database expressions
