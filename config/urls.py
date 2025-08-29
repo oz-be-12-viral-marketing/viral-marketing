@@ -22,6 +22,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, Spec
 from apps.users.views import EmailVerificationView, LoginView, LogoutView, RegisterView, UserDetailView
 
 urlpatterns = [
+    path("", include("frontend.urls")),
     path("admin/", admin.site.urls),
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
     path("swagger/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),

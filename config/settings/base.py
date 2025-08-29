@@ -42,6 +42,7 @@ CUSTOM_APPS = [
     "apps.users",
     "apps.notifications",
     "apps.analysis",
+    "frontend",
 ]
 
 THIRD_PARTY_APPS = [
