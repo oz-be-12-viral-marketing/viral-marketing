@@ -52,7 +52,6 @@ class AccountViewSetTestCase(APITestCase):
         response = self.client.get(self.url)
         accounts = Account.objects.filter(user=self.user)
         # Serializer의 context에 request를 포함시켜야 할 수 있습니다.
-        serializer = AccountSerializer(accounts, many=True, context={'request': None})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         # response.data는 OrderedDict를 포함할 수 있으므로, 직접 비교보다는 주요 값을 확인합니다.
         self.assertEqual(len(response.data), 1)

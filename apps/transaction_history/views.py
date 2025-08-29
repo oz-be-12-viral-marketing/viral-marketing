@@ -1,5 +1,4 @@
-from rest_framework import viewsets, permissions, status, serializers
-from rest_framework.response import Response
+from rest_framework import viewsets, permissions, serializers
 from django_filters import rest_framework as filters
 from .models import TransactionHistory
 from .serializers import TransactionHistorySerializer
