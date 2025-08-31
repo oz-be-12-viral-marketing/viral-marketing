@@ -1,6 +1,7 @@
 from django.db import models
 
 from apps.analysis.choices import ANALYSIS_PERIOD, ANALYSIS_TYPE
+from apps.transaction_history.models import TransactionHistory
 from apps.users.models import CustomUser
 
 
@@ -18,11 +19,11 @@ class Analysis(models.Model):
 
 
 class SentimentAnalysis(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    text_content = models.TextField()
-    sentiment = models.CharField(max_length=10)  # e.g., Positive, Negative, Neutral
+    transaction = models.OneToOneField(TransactionHistory, on_delete=models.CASCADE, related_name='sentiment_analysis')
+    text_content = models.TextField(verbose_name="리뷰 내용")
+    sentiment = models.CharField(max_length=10)  # e.g., 긍정, 부정
     score = models.FloatField()
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"[{self.sentiment}] {self.text_content[:50]}"
+        return f"[{self.sentiment}] on {self.transaction}"

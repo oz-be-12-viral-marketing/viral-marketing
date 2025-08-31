@@ -1,9 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import TemplateView
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from apps.accounts.models import Account
 from apps.transaction_history.models import TransactionHistory
+from apps.analysis.models import SentimentAnalysis
 from django.db.models import Sum # Import F for database expressions
 from django.db.models.functions import ExtractMonth # For extracting month from date
 from datetime import datetime, timezone # Import datetime and timezone
@@ -145,5 +146,18 @@ def signup_complete_view(request):
 
 
 @login_required
-def sentiment_analysis_view(request):
-    return render(request, 'frontend/sentiment_analysis.html')
+def transaction_analysis_form_view(request, transaction_id):
+    transaction = get_object_or_404(TransactionHistory, pk=transaction_id, account__user=request.user)
+    context = {
+        'transaction': transaction
+    }
+    return render(request, 'frontend/transaction_analysis_form.html', context)
+
+
+@login_required
+def analysis_history_view(request):
+    analyses = SentimentAnalysis.objects.filter(transaction__account__user=request.user).order_by('-created_at')
+    context = {
+        'analyses': analyses
+    }
+    return render(request, 'frontend/analysis_history.html', context)

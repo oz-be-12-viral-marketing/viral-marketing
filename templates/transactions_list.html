@@ -29,6 +29,7 @@
                     <th scope="col">거래 후 잔액</th>
                     <th scope="col">상세</th>
                     <th scope="col">거래 방식</th>
+                    <th scope="col">감정 분석</th>
                 </tr>
             </thead>
             <tbody>
@@ -41,6 +42,19 @@
                     <td>₩ {{ transaction.balance_after|floatformat:0|intcomma }}</td>
                     <td>{{ transaction.transaction_detail|default:"-" }}</td> {# Display "-" if detail is empty #}
                     <td>{{ transaction.get_transaction_method_display }}</td>
+                    <td>
+                        {% if transaction.sentiment_analysis %}
+                            {% if transaction.sentiment_analysis.sentiment == '긍정' %}
+                                <span class="badge bg-success">😃 긍정</span>
+                            {% elif transaction.sentiment_analysis.sentiment == '부정' %}
+                                <span class="badge bg-danger">😠 부정</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ transaction.sentiment_analysis.sentiment }}</span>
+                            {% endif %}
+                        {% else %}
+                            <a href="{% url 'transaction_analysis_form' transaction.id %}" class="btn btn-outline-primary btn-sm">리뷰하기</a>
+                        {% endif %}
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
