@@ -15,3 +15,14 @@ class Analysis(models.Model):
     rusult_image_url = models.URLField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
+class SentimentAnalysis(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    text_content = models.TextField()
+    sentiment = models.CharField(max_length=10)  # e.g., Positive, Negative, Neutral
+    score = models.FloatField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"[{self.sentiment}] {self.text_content[:50]}"

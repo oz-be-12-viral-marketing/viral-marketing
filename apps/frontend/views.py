@@ -142,3 +142,8 @@ def logged_out_view(request):
 @login_required
 def signup_complete_view(request):
     return render(request, 'account/signup_complete.html')
+
+
+@login_required
+def sentiment_analysis_view(request):
+    return render(request, 'frontend/sentiment_analysis.html')
