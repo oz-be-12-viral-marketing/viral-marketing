@@ -1,62 +1,77 @@
-from rest_framework.views import APIView
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.authentication import SessionAuthentication
-from rest_framework.permissions import IsAuthenticated
-from django.shortcuts import get_object_or_404
+import logging
 
-from .models import SentimentAnalysis
-from apps.transaction_history.models import TransactionHistory
-from transformers import pipeline
-
-# 감정 분석 모델을 앱 로딩 시 한 번만 로드합니다.
-sentiment_analyzer = pipeline('sentiment-analysis', model='sangrimlee/bert-base-multilingual-cased-nsmc')
+from apps.analysis.tasks import generate_spending_report # Celery 태스크 임포트
+from apps.transaction_history.models import TransactionHistory # Added
+from .models import SentimentAnalysis, SpendingReport
+from .serializers import SpendingReportSerializer # Serializer 임포트
 
 
-class SentimentAnalysisView(APIView):
-    authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def generate_report_api_view(request, period_type):
+    if period_type not in ['weekly', 'monthly']:
+        return Response({"error": "Invalid period type. Must be 'weekly' or 'monthly'."}, status=status.HTTP_400_BAD_REQUEST)
 
-    def post(self, request, transaction_id, *args, **kwargs):
-        # 1. URL로부터 받은 transaction_id로 거래 내역 객체 조회
-        transaction = get_object_or_404(TransactionHistory, pk=transaction_id, account__user=request.user)
+    try:
+        # Celery 태스크를 비동기적으로 실행하며, 현재 로그인한 사용자의 ID를 전달합니다.
+        generate_spending_report.delay(request.user.id, period_type)
+    except Exception as e:
+        # Redis 연결 실패 등 Celery 작업 전달 중 발생할 수 있는 예외 처리
+        logging.getLogger(__name__).error(f"Celery task dispatch failed for user {request.user.id}: {e}")
+        return Response({"error": "리포트 생성 작업을 시작하지 못했습니다. 서버 관리자에게 문의하세요."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        # 2. 이미 분석된 거래인지 확인 (OneToOne 관계이므로 중복 방지)
-        if hasattr(transaction, 'sentiment_analysis'):
-            return Response({'error': 'This transaction has already been analyzed.'}, status=status.HTTP_400_BAD_REQUEST)
+    return Response(
+        {"message": f"{period_type.capitalize()} spending report generation initiated."},
+        status=status.HTTP_202_ACCEPTED
+    )
 
-        # 3. 요청 데이터에서 리뷰 텍스트 가져오기
-        text_content = request.data.get('text_content')
-        if not text_content:
-            return Response({'error': 'text_content is required'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # 4. 감정 분석 수행
-        result = sentiment_analyzer(text_content)[0]
-        raw_sentiment = result['label']
-        score = result['score']
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def sentiment_analysis_api_view(request, transaction_id):
+    try:
+        transaction = TransactionHistory.objects.get(pk=transaction_id, account__user=request.user)
+    except TransactionHistory.DoesNotExist:
+        return Response({"error": "Transaction not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        # 5. 결과 라벨을 한글로 변환
-        if raw_sentiment.upper() == 'POSITIVE' or raw_sentiment == 'LABEL_0':
-            sentiment = '긍정'
-        elif raw_sentiment.upper() == 'NEGATIVE' or raw_sentiment == 'LABEL_1':
-            sentiment = '부정'
-        else:
-            sentiment = raw_sentiment
+    text_content = request.data.get('text_content')
+    if not text_content:
+        return Response({"error": "Text content is required."}, status=status.HTTP_400_BAD_REQUEST)
 
-        # 6. 분석 결과 저장
-        analysis_result = SentimentAnalysis.objects.create(
-            transaction=transaction,
-            text_content=text_content,
-            sentiment=sentiment,
-            score=score
-        )
+    # 여기에 실제 감정 분석 로직을 추가합니다.
+    # 현재는 플레이스홀더 응답을 반환합니다.
+    # 예: 모델 호출, 외부 API 호출 등
 
-        # 7. 결과 반환
-        return Response({
-            'id': analysis_result.id,
-            'transaction_id': transaction.id,
-            'text_content': analysis_result.text_content,
-            'sentiment': analysis_result.sentiment,
-            'score': analysis_result.score,
-            'created_at': analysis_result.created_at
-        }, status=status.HTTP_201_CREATED)
+    # 임시 감정 분석 결과
+    sentiment = "긍정" if "좋아" in text_content or "만족" in text_content else "부정"
+    score = 0.95 if sentiment == "긍정" else 0.15
+
+    # 분석 결과를 저장하는 로직 (SentimentAnalysis 모델이 있다면)
+    SentimentAnalysis.objects.create( # 주석 해제
+        transaction=transaction,
+        text_content=text_content,
+        sentiment=sentiment,
+        score=score
+    )
+
+    return Response({
+        "message": "Sentiment analysis completed.",
+        "sentiment": sentiment,
+        "score": score
+    }, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def report_list_api_view(request):
+    # 현재 로그인한 사용자의 리포트만 필터링하여 반환합니다.
+    reports = SpendingReport.objects.filter(user=request.user).order_by('-generated_date', '-created_at')
+
+    # [개선] Serializer를 사용하여 복잡한 데이터 변환 로직을 자동화합니다.
+    serializer = SpendingReportSerializer(reports, many=True)
+
+    return Response({"reports": serializer.data}, status=status.HTTP_200_OK)

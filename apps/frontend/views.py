@@ -6,14 +6,16 @@ from django.core.paginator import Paginator
 from django.db.models import Sum
 from django.db.models.functions import ExtractMonth
 from datetime import datetime, timezone
+import os # Added for MEDIA_ROOT path joining
 
 from apps.accounts.models import Account
 from apps.transaction_history.models import TransactionHistory
-from apps.analysis.models import SentimentAnalysis
+from apps.analysis.models import SentimentAnalysis, SpendingReport # Added SpendingReport
 from apps.transaction_history.filters import TransactionFilter
 from apps.analysis.filters import AnalysisFilter
 from apps.analysis.forms import SentimentAnalysisEditForm
 from .forms import AccountForm, TransactionForm, LoginForm
+from django.conf import settings # Added for MEDIA_ROOT
 
 
 def login_page_view(request):
@@ -91,10 +93,14 @@ def transactions_list_view(request):
         if form.is_valid():
             transaction = form.save(commit=False)
             account = transaction.account
+            print(f"DEBUG: Before update - Account ID: {account.id}, Balance: {account.balance}, Transaction Type: {transaction.transaction_type}, Amount: {transaction.amount}") # DEBUG
+
             if transaction.transaction_type == 'DEPOSIT':
                 account.balance += transaction.amount
             elif transaction.transaction_type == 'WITHDRAW':
                 account.balance -= transaction.amount
+            
+            print(f"DEBUG: After update - Account ID: {account.id}, New Balance: {account.balance}") # DEBUG
             account.save()
             transaction.balance_after = account.balance
             transaction.save()
@@ -200,3 +206,26 @@ def analysis_edit_view(request, analysis_id):
         'analysis': analysis
     }
     return render(request, 'frontend/analysis_edit_form.html', context)
+
+
+@login_required
+def generate_reports_view(request):
+    # 최신 주간 리포트 JSON 데이터 가져오기 (현재 사용자 기준)
+    weekly_report = SpendingReport.objects.filter(
+        user=request.user, # Filter by current user
+        report_type='weekly'
+    ).order_by('-generated_date', '-created_at').first()
+    weekly_report_json_data = weekly_report.json_data if weekly_report else '{}' # Default to empty JSON string
+
+    # 최신 월간 리포트 JSON 데이터 가져오기 (현재 사용자 기준)
+    monthly_report = SpendingReport.objects.filter(
+        user=request.user, # Filter by current user
+        report_type='monthly'
+    ).order_by('-generated_date', '-created_at').first()
+    monthly_report_json_data = monthly_report.json_data if monthly_report else '{}' # Default to empty JSON string
+
+    context = {
+        'weekly_report_json_data': weekly_report_json_data,
+        'monthly_report_json_data': monthly_report_json_data,
+    }
+    return render(request, 'frontend/spending_reports.html', context)

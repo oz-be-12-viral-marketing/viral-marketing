@@ -1,6 +1,8 @@
 from django.urls import path
-from .views import SentimentAnalysisView
+from . import views
 
 urlpatterns = [
-    path('transactions/<int:transaction_id>/sentiment/', SentimentAnalysisView.as_view(), name='transaction-sentiment-analysis'),
+    path('generate-report/<str:period_type>/', views.generate_report_api_view, name='generate_report_api'),
+    path('transactions/<int:transaction_id>/sentiment/', views.sentiment_analysis_api_view, name='sentiment_analysis_api'),
+    path('reports/', views.report_list_api_view, name='report_list_api'),
 ]

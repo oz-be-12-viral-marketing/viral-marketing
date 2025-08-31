@@ -1,6 +1,6 @@
 import django_filters
 from django import forms
-from .models import SentimentAnalysis
+from .models import SentimentAnalysis # 주석 해제
 
 SENTIMENT_CHOICES = (
     ('긍정', '긍정'),
@@ -8,7 +8,7 @@ SENTIMENT_CHOICES = (
 )
 
 
-class AnalysisFilter(django_filters.FilterSet):
+class AnalysisFilter(django_filters.FilterSet): # 주석 해제
     text_content = django_filters.CharFilter(
         lookup_expr='icontains',
         label='리뷰 내용',

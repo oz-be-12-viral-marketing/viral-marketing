@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, get_user_model
 from rest_framework import serializers
+from allauth.account.auth_backends import AuthenticationBackend # Added import
 
 User = get_user_model()
 
@@ -40,7 +41,7 @@ class LoginSerializer(serializers.Serializer):
             raise serializers.ValidationError("이메일과 비밀번호를 모두 입력해주세요.")
 
         # Try to authenticate the user
-        user = authenticate(username=email, password=password)
+        user = authenticate(request=self.context.get('request'), username=email, password=password)
 
         if user is None:
             # Check if user exists but is inactive

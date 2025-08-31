@@ -1,0 +1,258 @@
+{% extends 'base.html' %}
+
+{% block title %}소비 리포트{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">소비 리포트</h2>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">주간 소비 리포트</h5>
+                    <p class="card-text">최근 주간 소비 패턴을 분석한 리포트입니다.</p>
+                    <div style="height: 300px; position: relative;">
+                        <canvas id="weekly-spending-chart"></canvas>
+                    </div>
+                    <div class="d-grid gap-2 mx-auto">
+                        <button class="btn btn-primary" id="generate-weekly-report">주간 리포트 생성</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">월간 소비 리포트</h5>
+                    <p class="card-text">최근 월간 소비 패턴을 분석한 리포트입니다.</p>
+                    <div style="height: 300px; position: relative;">
+                        <canvas id="monthly-spending-chart"></canvas>
+                    </div>
+                    <div class="d-grid gap-2 mx-auto">
+                        <button class="btn btn-success" id="generate-monthly-report">월간 리포트 생성</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <h3>생성된 리포트 목록</h3>
+    <div id="report-list" class="list-group">
+        <!-- 리포트 목록이 여기에 동적으로 로드됩니다. -->
+        <p class="text-muted">생성된 리포트가 없습니다.</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const weeklyBtn = document.getElementById('generate-weekly-report');
+    const monthlyBtn = document.getElementById('generate-monthly-report');
+    const weeklyChartCanvas = document.getElementById('weekly-spending-chart'); // Changed
+    const monthlyChartCanvas = document.getElementById('monthly-spending-chart'); // Changed
+    const reportListDiv = document.getElementById('report-list');
+
+    let weeklyChart = null; // Chart 인스턴스를 저장할 변수
+    let monthlyChart = null; // Chart 인스턴스를 저장할 변수
+
+    // Define a color palette for pie chart slices
+    const backgroundColors = [
+        'rgba(255, 99, 132, 0.6)', // Red
+        'rgba(54, 162, 235, 0.6)', // Blue
+        'rgba(255, 206, 86, 0.6)', // Yellow
+        'rgba(75, 192, 192, 0.6)', // Green
+        'rgba(153, 102, 255, 0.6)',// Purple
+        'rgba(255, 159, 64, 0.6)', // Orange
+        'rgba(199, 199, 199, 0.6)',// Grey
+        'rgba(83, 102, 255, 0.6)', // Indigo
+        'rgba(255, 99, 255, 0.6)', // Pink
+        'rgba(99, 255, 132, 0.6)'  // Light Green
+    ];
+    const borderColors = [
+        'rgba(255, 99, 132, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)',
+        'rgba(199, 199, 199, 1)',
+        'rgba(83, 102, 255, 1)',
+        'rgba(255, 99, 255, 1)',
+        'rgba(99, 255, 132, 1)'
+    ];
+
+    // 그래프를 그리는 함수
+    function drawChart(canvasElement, chartData, title) {
+        // 기존 차트 인스턴스가 있다면 파괴
+        if (canvasElement.chart) {
+            canvasElement.chart.destroy();
+        }
+
+        const ctx = canvasElement.getContext('2d');
+        canvasElement.chart = new Chart(ctx, {
+            type: 'pie', // 막대 그래프
+            data: {
+                labels: chartData.dates, // 날짜
+                datasets: [{
+                    label: '총 지출 금액',
+                    data: chartData.spending, // 지출 금액
+                    backgroundColor: backgroundColors.slice(0, chartData.dates.length), // Use enough colors
+                    borderColor: borderColors.slice(0, chartData.dates.length),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false, // Added for responsiveness, consistent with dashboard
+                plugins: {
+                    title: {
+                        display: true,
+                        text: title,
+                        color: '#333' // Dark color for title, assuming light background
+                    },
+                    legend: {
+                        position: 'right', // Common for pie charts
+                        labels: {
+                            color: '#333' // Dark color for legend labels
+                        }
+                    },
+                    tooltip: { // Add tooltips for better interactivity
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed !== null) {
+                                    label += '₩' + new Intl.NumberFormat().format(context.parsed);
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // 리포트 생성 버튼 클릭 이벤트 (Celery 태스크 호출)
+    async function generateReport(periodType) {
+        try {
+            const response = await fetch(`/api/v1/analysis/generate-report/${periodType}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}', // CSRF 토큰 필요
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data = await response.json();
+            if (response.ok) {
+                alert(`${periodType} 리포트 생성을 요청했습니다. 잠시 후 새로고침 해주세요.`);
+                // 성공 시 리포트 목록 새로고침
+                fetchReportList();
+            } else {
+                alert(`리포트 생성 실패: ${data.error || response.statusText}`);
+            }
+        } catch (error) {
+            console.error('리포트 생성 요청 중 오류 발생:', error);
+            alert('리포트 생성 요청 중 오류가 발생했습니다.');
+        }
+    }
+
+    if (weeklyBtn) {
+        weeklyBtn.addEventListener('click', () => generateReport('weekly'));
+    }
+    if (monthlyBtn) {
+        monthlyBtn.addEventListener('click', () => generateReport('monthly'));
+    }
+
+    // 생성된 리포트 목록을 가져오는 함수
+    async function fetchReportList() {
+        try {
+            const response = await fetch('/api/v1/analysis/reports/');
+            const data = await response.json();
+            reportListDiv.innerHTML = ''; // 기존 목록 초기화
+            if (data.reports && data.reports.length > 0) {
+                // 최신 리포트 데이터를 찾아 그래프 그리기
+                const latestWeeklyReport = data.reports.find(report => report.report_type === 'weekly');
+                const latestMonthlyReport = data.reports.find(report => report.report_type === 'monthly');
+
+                if (latestWeeklyReport && latestWeeklyReport.json_data) {
+                    const chartData = latestWeeklyReport.json_data;
+                    drawChart(weeklyChartCanvas, chartData, `주간 소비 리포트 (${latestWeeklyReport.generated_date})`);
+                } else {
+                    weeklyChartCanvas.style.display = 'none'; // 데이터 없으면 캔버스 숨기기
+                    weeklyChartCanvas.insertAdjacentHTML('afterend', '<p class="text-muted">주간 리포트 데이터가 없습니다.</p>');
+                }
+
+                if (latestMonthlyReport && latestMonthlyReport.json_data) {
+                    const chartData = latestMonthlyReport.json_data;
+                    drawChart(monthlyChartCanvas, chartData, `월간 소비 리포트 (${latestMonthlyReport.generated_date})`);
+                } else {
+                    monthlyChartCanvas.style.display = 'none'; // 데이터 없으면 캔버스 숨기기
+                    monthlyChartCanvas.insertAdjacentHTML('afterend', '<p class="text-muted">월간 리포트 데이터가 없습니다.</p>');
+                }
+
+                // 리포트 목록 표시
+                data.reports.forEach(report => {
+                    const reportItem = document.createElement('div');
+                    reportItem.className = 'card mb-3 shadow-sm';
+                    reportItem.innerHTML = `
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                ${report.report_type === 'weekly' ? '주간 소비 리포트' : '월간 소비 리포트'}
+                            </h5>
+                            <p class="card-text text-muted">생성일: ${new Date(report.generated_date).toLocaleDateString('ko-KR')}</p>
+                            <button class="btn btn-sm btn-info view-report-btn" data-report-id="${report.id}" data-report-type="${report.report_type}">리포트 보기</button>
+                        </div>
+                    `;
+                    reportListDiv.appendChild(reportItem);
+                });
+
+                // "리포트 보기" 버튼 클릭 이벤트 리스너 추가
+                reportListDiv.querySelectorAll('.view-report-btn').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const reportId = this.dataset.reportId;
+                        const reportType = this.dataset.reportType;
+                        const selectedReport = data.reports.find(r => r.id == reportId);
+                        if (selectedReport && selectedReport.json_data) {
+                            const chartData = selectedReport.json_data;
+                            if (reportType === 'weekly') {
+                                weeklyChartCanvas.style.display = 'block';
+                                monthlyChartCanvas.style.display = 'none';
+                                drawChart(weeklyChartCanvas, chartData, `주간 소비 리포트 (${selectedReport.generated_date})`);
+                            } else {
+                                monthlyChartCanvas.style.display = 'block';
+                                weeklyChartCanvas.style.display = 'none';
+                                drawChart(monthlyChartCanvas, chartData, `월간 소비 리포트 (${selectedReport.generated_date})`);
+                            }
+                        }
+                    });
+                });
+
+            } else {
+                reportListDiv.innerHTML = '<p class="text-muted">생성된 리포트가 없습니다.</p>';
+                weeklyChartCanvas.style.display = 'none';
+                monthlyChartCanvas.style.display = 'none';
+                weeklyChartCanvas.insertAdjacentHTML('afterend', '<p class="text-muted">주간 리포트 데이터가 없습니다.</p>');
+                monthlyChartCanvas.insertAdjacentHTML('afterend', '<p class="text-muted">월간 리포트 데이터가 없습니다.</p>');
+            }
+        } catch (error) {
+            console.error('리포트 목록을 가져오는 중 오류 발생:', error);
+            reportListDiv.innerHTML = '<p class="text-danger">리포트 목록을 불러올 수 없습니다.</p>';
+            weeklyChartCanvas.style.display = 'none';
+            monthlyChartCanvas.style.display = 'none';
+            weeklyChartCanvas.insertAdjacentHTML('afterend', '<p class="text-danger">리포트 데이터를 불러올 수 없습니다.</p>');
+            monthlyChartCanvas.insertAdjacentHTML('afterend', '<p class="text-danger">리포트 데이터를 불러올 수 없습니다.</p>');
+        }
+    }
+
+    // 페이지 로드 시 리포트 목록 가져오기
+    fetchReportList();
+});
+</script>
+{% endblock %}

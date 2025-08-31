@@ -16,4 +16,6 @@ urlpatterns = [
     path('analysis-history/', views.analysis_history_view, name='analysis_history'),
     path('transactions/<int:transaction_id>/delete/', views.transaction_delete_view, name='transaction_delete'),
     path('analysis-history/<int:analysis_id>/edit/', views.analysis_edit_view, name='analysis_edit'),
+    path('spending-reports/', views.generate_reports_view, name='spending_reports'),
+    path('spending-reports/generate/', views.generate_reports_view, name='generate_spending_reports'),
 ]

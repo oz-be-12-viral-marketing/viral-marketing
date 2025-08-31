@@ -17,6 +17,11 @@ dependencies = [
     "cryptography",
     "transformers",
     "torch",
+    "pandas",
+    "matplotlib",
+    "celery",
+    "redis",
+    "django-celery-beat",
 ]
 
 [project.optional-dependencies]

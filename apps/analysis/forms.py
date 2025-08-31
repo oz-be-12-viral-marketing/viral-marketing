@@ -1,5 +1,5 @@
 from django import forms
-from .models import SentimentAnalysis
+from .models import SentimentAnalysis # 주석 해제
 
 SENTIMENT_CHOICES = (
     ('긍정', '긍정'),
@@ -7,7 +7,7 @@ SENTIMENT_CHOICES = (
 )
 
 
-class SentimentAnalysisEditForm(forms.ModelForm):
+class SentimentAnalysisEditForm(forms.ModelForm): # 주석 해제
     sentiment = forms.ChoiceField(
         choices=SENTIMENT_CHOICES,
         widget=forms.RadioSelect,
