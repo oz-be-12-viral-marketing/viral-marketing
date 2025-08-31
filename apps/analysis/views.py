@@ -1,6 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.authentication import SessionAuthentication
+from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 
 from .models import SentimentAnalysis
@@ -12,6 +14,9 @@ sentiment_analyzer = pipeline('sentiment-analysis', model='sangrimlee/bert-base-
 
 
 class SentimentAnalysisView(APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, transaction_id, *args, **kwargs):
         # 1. URL로부터 받은 transaction_id로 거래 내역 객체 조회
         transaction = get_object_or_404(TransactionHistory, pk=transaction_id, account__user=request.user)
