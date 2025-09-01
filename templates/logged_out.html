@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}로그아웃됨{% endblock %}
+
+{% block content %}
+<div class="container mt-5 animate__animated animate__fadeInUp">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-header text-center bg-primary text-white">
+                    <h3 class="mb-0">로그아웃</h3>
+                </div>
+                <div class="card-body p-4 text-center">
+                    <p class="lead">성공적으로 로그아웃되었습니다.</p>
+                    <a href="{% url 'main' %}" class="btn btn-primary mt-3">메인 페이지로 이동</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

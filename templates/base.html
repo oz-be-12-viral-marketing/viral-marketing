@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}가계부 시스템{% endblock %}</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    
+    <!-- Bootstrap Icons CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+        <!-- Left side (empty or minimal) -->
+        <div></div> 
+
+        <!-- Centered Title -->
+        <a class="navbar-brand mx-auto" href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'main' %}{% endif %}">
+            OZ BANK 가계부
+        </a>
+
+        <!-- Right side (Dropdown Menu) -->
+        <div class="dropdown">
+            <button class="btn btn-link nav-link dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-list fs-4"></i> <!-- Hamburger icon -->
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+                {% if user.is_authenticated %}
+                <li><a class="dropdown-item {% if request.path == '/dashboard/' %}active{% endif %}" href="{% url 'dashboard' %}">홈</a></li>
+                <li><a class="dropdown-item {% if request.path == '/accounts/' %}active{% endif %}" href="{% url 'accounts_list' %}">계좌</a></li>
+                <li><a class="dropdown-item {% if request.path == '/transactions/' %}active{% endif %}" href="{% url 'transactions_list' %}">거래내역</a></li>
+                <li><a class="dropdown-item {% if request.path == '/profile/' %}active{% endif %}" href="{% url 'profile' %}">프로필</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <form action="{% url 'logout' %}" method="post" class="dropdown-item">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-link text-danger p-0 m-0 border-0 logout-button">로그아웃</button>
+                    </form>
+                </li>
+                {% else %}
+                <li><a class="dropdown-item" href="{% url 'login' %}">로그인</a></li>
+                <li><a class="dropdown-item" href="{% url 'account_signup' %}">회원가입</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+    <main class="container mt-4">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="footer mt-auto py-3">
+        <div class="container">
+            <span class="text-muted">&copy; 2025 가계부 시스템. All rights reserved.</span>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
+{% if user.is_authenticated %}
+<nav class="navbar fixed-bottom navbar-dark d-lg-none shadow-lg">
+    <div class="container-fluid justify-content-around">
+        <a class="nav-link text-center" href="{% url 'dashboard' %}">
+            <i class="bi bi-house-door-fill d-block fs-4"></i>
+            <small>홈</small>
+        </a>
+        <a class="nav-link text-center" href="{% url 'accounts_list' %}">
+            <i class="bi bi-wallet-fill d-block fs-4"></i>
+            <small>계좌</small>
+        </a>
+        <a class="nav-link text-center" href="{% url 'transactions_list' %}">
+            <i class="bi bi-receipt-cutoff d-block fs-4"></i>
+            <small>거래내역</small>
+        </a>
+        <a class="nav-link text-center" href="{% url 'profile' %}">
+            <i class="bi bi-person-circle d-block fs-4"></i>
+            <small>프로필</small>
+        </a>
+    </div>
+</nav>
+{% endif %}
