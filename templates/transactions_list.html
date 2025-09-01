@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block title %}거래 내역{% endblock %}
+
+{% block content %}
+<div class="row animate__animated animate__fadeInUp">
+    <div class="col-md-12">
+        <h1>거래 내역</h1>
+
+        {# Filter Form #}
+        <div class="card mb-4">
+            <div class="card-body">
+                <form method="get">
+                    <div class="row align-items-end">
+                        <div class="col-md-4 mb-3">
+                            <label for="{{ filter.form.transaction_detail.id_for_label }}" class="form-label">{{ filter.form.transaction_detail.label }}</label>
+                            {{ filter.form.transaction_detail }}
+                        </div>
+                        <div class="col-md-2 mb-3">
+                            <label for="{{ filter.form.transaction_type.id_for_label }}" class="form-label">{{ filter.form.transaction_type.label }}</label>
+                            {{ filter.form.transaction_type }}
+                        </div>
+                        <div class="col-md-2 mb-3">
+                            <label for="{{ filter.form.start_date.id_for_label }}" class="form-label">{{ filter.form.start_date.label }}</label>
+                            {{ filter.form.start_date }}
+                        </div>
+                        <div class="col-md-2 mb-3">
+                            <label for="{{ filter.form.end_date.id_for_label }}" class="form-label">{{ filter.form.end_date.label }}</label>
+                            {{ filter.form.end_date }}
+                        </div>
+                        <div class="col-md-2 mb-3 d-grid">
+                            <button class="btn btn-primary" type="submit">검색</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {# Django Messages #}
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if filter.qs %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">계좌</th>
+                    <th scope="col">유형</th>
+                    <th scope="col">금액</th>
+                    <th scope="col">거래 후 잔액</th>
+                    <th scope="col">상세</th>
+                    <th scope="col">거래 방식</th>
+                    <th scope="col">감정 분석</th>
+                    <th scope="col">동작</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction in page_obj %}
+                <tr>
+                    <td>{{ transaction.id }}</td>
+                    <td>{{ transaction.account.account_number }}</td> {# Access related account's number #}
+                    <td>{{ transaction.get_transaction_type_display }}</td>
+                    <td>₩ {{ transaction.amount|floatformat:0|intcomma }}</td>
+                    <td>₩ {{ transaction.balance_after|floatformat:0|intcomma }}</td>
+                    <td>{{ transaction.transaction_detail|default:"-" }}</td> {# Display "-" if detail is empty #}
+                    <td>{{ transaction.get_transaction_method_display }}</td>
+                    <td>
+                        {% if transaction.sentiment_analysis %}
+                            {% if transaction.sentiment_analysis.sentiment == '긍정' %}
+                                <span class="badge bg-success">😃 긍정</span>
+                            {% elif transaction.sentiment_analysis.sentiment == '부정' %}
+                                <span class="badge bg-danger">😠 부정</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ transaction.sentiment_analysis.sentiment }}</span>
+                            {% endif %}
+                        {% else %}
+                            <a href="{% url 'transaction_analysis_form' transaction.id %}" class="btn btn-outline-primary btn-sm">리뷰하기</a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form action="{% url 'transaction_delete' transaction.id %}" method="post" onsubmit="return confirm('정말 이 거래 내역을 삭제하시겠습니까? 잔액이 변동됩니다.');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm">삭제</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>해당 조건에 맞는 거래 내역이 없습니다.</p>
+        {% endif %}
+
+        {# Pagination #}
+        {% if page_obj.has_other_pages %}
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page=1">&laquo; 처음</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">이전</a></li>
+                {% endif %}
+
+                <li class="page-item disabled"><a class="page-link" href="#">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</a></li>
+
+                {% if page_obj.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">다음</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">마지막 &raquo;</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+
+        <!-- Button to trigger modal -->
+        <div class="d-flex justify-content-end">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTransactionModal">
+                새 거래 추가
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Add Transaction Modal -->
+<div class="modal fade" id="addTransactionModal" tabindex="-1" aria-labelledby="addTransactionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addTransactionModalLabel">새 거래 추가</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}
+                                <div class="form-text">{{ field.help_text }}</div>
+                            {% endif %}
+                            {% for error in field.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <button type="submit" class="btn btn-primary">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+    // Show modal if form has errors after POST request
+    {% if form.errors %}
+        var addTransactionModal = new bootstrap.Modal(document.getElementById('addTransactionModal'));
+        addTransactionModal.show();
+    {% endif %}
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const addTransactionModalElement = document.getElementById('addTransactionModal');
+        const addTransactionButton = document.querySelector('[data-bs-target="#addTransactionModal"]'); // The button that opens the modal
+
+        if (addTransactionModalElement && addTransactionButton) {
+            addTransactionModalElement.addEventListener('hide.bs.modal', function () {
+                addTransactionButton.focus(); // Return focus to the button that opened the modal
+            });
+        }
+    });
+</script>
+{% endblock %}

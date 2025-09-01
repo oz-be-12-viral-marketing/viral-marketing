@@ -12,3 +12,6 @@ class Account(models.Model):
     account_type = models.CharField(max_length=20, choices=ACCOUNT_TYPE)
     balance = models.DecimalField(max_digits=15, decimal_places=2, default=0.00)
     currency = models.CharField(max_length=3, choices=CURRENCIES, default="KRW")
+
+    def __str__(self):
+        return f"{self.get_bank_code_display()} ({self.account_number})"

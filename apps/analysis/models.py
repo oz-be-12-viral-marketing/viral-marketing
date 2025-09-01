@@ -1,6 +1,7 @@
 from django.db import models
 
 from apps.analysis.choices import ANALYSIS_PERIOD, ANALYSIS_TYPE
+from apps.transaction_history.models import TransactionHistory
 from apps.users.models import CustomUser
 
 
@@ -15,3 +16,14 @@ class Analysis(models.Model):
     rusult_image_url = models.URLField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
+class SentimentAnalysis(models.Model):
+    transaction = models.OneToOneField(TransactionHistory, on_delete=models.CASCADE, related_name='sentiment_analysis')
+    text_content = models.TextField(verbose_name="리뷰 내용")
+    sentiment = models.CharField(max_length=10)  # e.g., 긍정, 부정
+    score = models.FloatField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"[{self.sentiment}] on {self.transaction}"
