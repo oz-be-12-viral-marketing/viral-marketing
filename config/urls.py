@@ -34,7 +34,7 @@ urlpatterns = [
     path("activate/<uidb64>/<token>/", EmailVerificationView.as_view(), name="activate-user"),
     path("users/logout/", DjangoLogoutView.as_view(next_page="logged_out"), name="logout"),
     path("api/v1/users/me/", UserDetailView.as_view(), name="user-detail"),
-    path("users/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),  # Added
+    path("users/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("api/v1/", include("apps.accounts.urls")),
     path("api/v1/", include("apps.transaction_history.urls")),
     path("api/v1/analysis/", include("apps.analysis.urls")),
