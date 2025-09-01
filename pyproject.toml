@@ -1,0 +1,41 @@
+[project]
+name = "viral-marketing"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "dj-database-url>=3.0.1",
+    "django>=5.2.5",
+    "djangorestframework>=3.15.2",
+    "gunicorn",
+    "pre-commit>=4.3.0",
+    "psycopg2-binary",
+    "django-filter>=24.2",
+    "django-allauth",
+    "requests",
+    "cryptography",
+    "transformers",
+    "torch",
+    "pandas",
+    "matplotlib",
+    "celery",
+    "redis",
+    "django-celery-beat",
+]
+
+[project.optional-dependencies]
+dev = [
+    "drf-spectacular>=0.28.0",
+    "ruff>=0.12.10",
+    "autoflake>=2.3.1",
+    "black>=25.1.0",
+    "flake8>=7.3.0",
+    "isort>=6.0.1",
+    "coverage",
+    "djangorestframework-simplejwt",
+    "django-debug-toolbar>=6.0.0",
+]
+
+[tool.setuptools]
+packages = ["apps", "config", "core"]
