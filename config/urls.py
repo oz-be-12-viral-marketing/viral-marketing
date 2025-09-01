@@ -17,24 +17,17 @@ Including another URLconf
 
 from django.conf import settings
 from django.contrib import admin
-from django.contrib.auth.views import LogoutView as DjangoLogoutView
 from django.urls import include, path
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
-from apps.users.views import EmailVerificationView, LoginView, TokenRefreshView, UserDetailView
-
 urlpatterns = [
-    path("api/v1/users/login/", LoginView.as_view(), name="api_login"),
     path("", include("apps.frontend.urls")),
     path("admin/", admin.site.urls),
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
     path("swagger/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
     path("redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
     path("accounts/", include("allauth.urls")),
-    path("activate/<uidb64>/<token>/", EmailVerificationView.as_view(), name="activate-user"),
-    path("users/logout/", DjangoLogoutView.as_view(next_page="logged_out"), name="logout"),
-    path("api/v1/users/me/", UserDetailView.as_view(), name="user-detail"),
-    path("users/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("api/vi/", include("apps.users.urls")),
     path("api/v1/", include("apps.accounts.urls")),
     path("api/v1/", include("apps.transaction_history.urls")),
     path("api/v1/analysis/", include("apps.analysis.urls")),
