@@ -4,6 +4,8 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from apps.users.models import CustomUser
+
 from .models import Notification
 
 User = get_user_model()
@@ -12,17 +14,34 @@ User = get_user_model()
 class NotificationReadAPITest(APITestCase):
 
     def setUp(self):
-        # 테스트용 유저 생성
-        self.user = User.objects.create_user(username="testuser", password="testpass")
-        self.other_user = User.objects.create_user(username="otheruser", password="testpass")
+        # 유저 생성
+        self.user = CustomUser.objects.create_user(
+            email='testuser@example.com',
+            password='password123',
+            name='Test User',
+            nickname='testuser'
+        )
+        self.user.is_active = True
+        self.user.save()
 
-        # 로그인 처리
-        self.client.login(username="testuser", password="testpass")
+        self.other_user = CustomUser.objects.create_user(
+            email='other@example.com',
+            password='password123',
+            name='Other User',
+            nickname='otheruser'
+        )
+
+        # 인증 처리 (JWT 토큰 필요 없음)
+        self.client.force_authenticate(user=self.user)
 
         # 알림 생성
-        self.notification = Notification.objects.create(user=self.user, message="Test notification", is_read=False)
+        self.notification = Notification.objects.create(
+            user=self.user,
+            message="테스트 알림"
+        )
         self.other_notification = Notification.objects.create(
-            user=self.other_user, message="Other user's notification", is_read=False
+            user=self.other_user,
+            message="다른 유저 알림"
         )
 
     def test_read_notification_success(self):
@@ -53,4 +72,4 @@ class NotificationReadAPITest(APITestCase):
         url = reverse("notification-read", args=[self.notification.id])
         response = self.client.patch(url)
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
