@@ -12,4 +12,8 @@ urlpatterns = [
     path('profile/', views.profile_view, name='profile'),
     path('logged-out/', views.logged_out_view, name='logged_out'),
     path('accounts/signup/complete/', views.signup_complete_view, name='account_signup_complete'),
+    path('transactions/<int:transaction_id>/analyze/', views.transaction_analysis_form_view, name='transaction_analysis_form'),
+    path('analysis-history/', views.analysis_history_view, name='analysis_history'),
+    path('transactions/<int:transaction_id>/delete/', views.transaction_delete_view, name='transaction_delete'),
+    path('analysis-history/<int:analysis_id>/edit/', views.analysis_edit_view, name='analysis_edit'),
 ]

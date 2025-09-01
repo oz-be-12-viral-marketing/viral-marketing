@@ -37,6 +37,7 @@ urlpatterns = [
     path("users/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"), # Added
     path("api/v1/", include("apps.accounts.urls")),
     path("api/v1/", include("apps.transaction_history.urls")),
+    path("api/v1/analysis/", include("apps.analysis.urls")),
 ]
 
 if settings.DEBUG:

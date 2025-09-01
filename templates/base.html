@@ -47,6 +47,7 @@
                 <li><a class="dropdown-item {% if request.path == '/dashboard/' %}active{% endif %}" href="{% url 'dashboard' %}">홈</a></li>
                 <li><a class="dropdown-item {% if request.path == '/accounts/' %}active{% endif %}" href="{% url 'accounts_list' %}">계좌</a></li>
                 <li><a class="dropdown-item {% if request.path == '/transactions/' %}active{% endif %}" href="{% url 'transactions_list' %}">거래내역</a></li>
+                <li><a class="dropdown-item {% if request.path == '/analysis-history/' %}active{% endif %}" href="{% url 'analysis_history' %}">감정 분석</a></li>
                 <li><a class="dropdown-item {% if request.path == '/profile/' %}active{% endif %}" href="{% url 'profile' %}">프로필</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li>
@@ -94,6 +95,10 @@
         <a class="nav-link text-center" href="{% url 'transactions_list' %}">
             <i class="bi bi-receipt-cutoff d-block fs-4"></i>
             <small>거래내역</small>
+        </a>
+        <a class="nav-link text-center" href="{% url 'transactions_list' %}">
+            <i class="bi bi-emoji-smile-fill d-block fs-4"></i>
+            <small>감정 분석</small>
         </a>
         <a class="nav-link text-center" href="{% url 'profile' %}">
             <i class="bi bi-person-circle d-block fs-4"></i>

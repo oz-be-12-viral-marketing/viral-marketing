@@ -35,11 +35,14 @@ django==5.2.5
     #   viral-marketing (pyproject.toml)
     #   dj-database-url
     #   django-allauth
+    #   django-debug-toolbar
     #   django-filter
     #   djangorestframework
     #   djangorestframework-simplejwt
     #   drf-spectacular
 django-allauth==65.11.1
+    # via viral-marketing (pyproject.toml)
+django-debug-toolbar==6.0.0
     # via viral-marketing (pyproject.toml)
 django-filter==25.1
     # via viral-marketing (pyproject.toml)
@@ -53,11 +56,25 @@ djangorestframework-simplejwt==5.5.1
 drf-spectacular==0.28.0
     # via viral-marketing (pyproject.toml)
 filelock==3.19.1
-    # via virtualenv
+    # via
+    #   huggingface-hub
+    #   torch
+    #   transformers
+    #   virtualenv
 flake8==7.3.0
     # via viral-marketing (pyproject.toml)
+fsspec==2025.7.0
+    # via
+    #   huggingface-hub
+    #   torch
 gunicorn==23.0.0
     # via viral-marketing (pyproject.toml)
+hf-xet==1.1.9
+    # via huggingface-hub
+huggingface-hub==0.34.4
+    # via
+    #   tokenizers
+    #   transformers
 identify==2.6.13
     # via pre-commit
 idna==3.10
@@ -66,20 +83,32 @@ inflection==0.5.1
     # via drf-spectacular
 isort==6.0.1
     # via viral-marketing (pyproject.toml)
+jinja2==3.1.6
+    # via torch
 jsonschema==4.25.1
     # via drf-spectacular
 jsonschema-specifications==2025.4.1
     # via jsonschema
+markupsafe==3.0.2
+    # via jinja2
 mccabe==0.7.0
     # via flake8
+mpmath==1.3.0
+    # via sympy
 mypy-extensions==1.1.0
     # via black
+networkx==3.5
+    # via torch
 nodeenv==1.9.1
     # via pre-commit
+numpy==2.3.2
+    # via transformers
 packaging==25.0
     # via
     #   black
     #   gunicorn
+    #   huggingface-hub
+    #   transformers
 pathspec==0.12.1
     # via black
 platformdirs==4.4.0
@@ -103,23 +132,51 @@ pyjwt==2.10.1
 pyyaml==6.0.2
     # via
     #   drf-spectacular
+    #   huggingface-hub
     #   pre-commit
+    #   transformers
 referencing==0.36.2
     # via
     #   jsonschema
     #   jsonschema-specifications
+regex==2025.8.29
+    # via transformers
 requests==2.32.5
-    # via viral-marketing (pyproject.toml)
+    # via
+    #   viral-marketing (pyproject.toml)
+    #   huggingface-hub
+    #   transformers
 rpds-py==0.27.1
     # via
     #   jsonschema
     #   referencing
 ruff==0.12.10
     # via viral-marketing (pyproject.toml)
+safetensors==0.6.2
+    # via transformers
+setuptools==80.9.0
+    # via torch
 sqlparse==0.5.3
-    # via django
+    # via
+    #   django
+    #   django-debug-toolbar
+sympy==1.14.0
+    # via torch
+tokenizers==0.22.0
+    # via transformers
+torch==2.8.0
+    # via viral-marketing (pyproject.toml)
+tqdm==4.67.1
+    # via
+    #   huggingface-hub
+    #   transformers
+transformers==4.56.0
+    # via viral-marketing (pyproject.toml)
 typing-extensions==4.15.0
-    # via referencing
+    # via
+    #   huggingface-hub
+    #   referencing
+    #   torch
 uritemplate==4.2.0
     # via drf-spectacular
 urllib3==2.5.0
