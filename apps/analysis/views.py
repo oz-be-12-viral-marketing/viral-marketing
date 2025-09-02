@@ -3,7 +3,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 import logging
-import os # Added missing import
 
 from apps.transaction_history.models import TransactionHistory
 from .models import SentimentAnalysis, SpendingReport

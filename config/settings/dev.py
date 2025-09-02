@@ -3,6 +3,7 @@
 import os
 import sys # Added for conditional debug_toolbar loading
 from .base import *  # noqa: F403
+from .base import MIDDLEWARE # MIDDLEWARE를 명시적으로 가져오기
 
 DEBUG = True
 
