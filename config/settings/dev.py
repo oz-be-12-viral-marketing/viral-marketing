@@ -1,6 +1,7 @@
 # config/settings/dev.py
 # 개발 환경용 설정
 import os
+import sys # Added for conditional debug_toolbar loading
 from .base import *  # noqa: F403
 
 DEBUG = True
@@ -22,8 +23,12 @@ DATABASES = {
     }
 }
 
-# Debug Toolbar 강제 활성화 설정
-INTERNAL_IPS = ["0.0.0.0"] # 모든 IP에서 툴바 표시 (개발용)
+# Debug Toolbar settings for development
+INTERNAL_IPS = ["127.0.0.1"] # Standard for local development
 DEBUG_TOOLBAR_CONFIG = {
-    "SHOW_TOOLBAR_CALLBACK": lambda request: True,
+    "IS_RUNNING_TESTS": False, # Disable check during tests
 }
+
+# Add Debug Toolbar middleware directly in dev.py
+if 'test' not in sys.argv:
+    MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')
