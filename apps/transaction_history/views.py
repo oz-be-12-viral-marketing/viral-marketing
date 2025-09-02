@@ -1,52 +1,56 @@
-from rest_framework import viewsets, permissions, serializers
 from django_filters import rest_framework as filters
+from drf_spectacular.utils import OpenApiExample, OpenApiParameter, extend_schema
+from rest_framework import status  # Import status for examples
+from rest_framework import permissions, serializers, viewsets
+
 from .models import TransactionHistory
 from .serializers import TransactionHistorySerializer
-from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
-from rest_framework import status # Import status for examples
+
 
 class TransactionHistoryFilter(filters.FilterSet):
     """
     Filter for TransactionHistory
     """
-    transaction_type = filters.CharFilter(field_name='transaction_type', lookup_expr='iexact')
-    amount = filters.NumberFilter(field_name='amount', lookup_expr='exact')
-    amount__gt = filters.NumberFilter(field_name='amount', lookup_expr='gt')
-    amount__lt = filters.NumberFilter(field_name='amount', lookup_expr='lt')
+
+    transaction_type = filters.CharFilter(field_name="transaction_type", lookup_expr="iexact")
+    amount = filters.NumberFilter(field_name="amount", lookup_expr="exact")
+    amount__gt = filters.NumberFilter(field_name="amount", lookup_expr="gt")
+    amount__lt = filters.NumberFilter(field_name="amount", lookup_expr="lt")
 
     class Meta:
         model = TransactionHistory
-        fields = ['transaction_type', 'amount', 'amount__gt', 'amount__lt']
+        fields = ["transaction_type", "amount", "amount__gt", "amount__lt"]
+
 
 @extend_schema(
     description="API for managing transaction history. Provides CRUD operations for transactions associated with the authenticated user's accounts.",
     parameters=[
         OpenApiParameter(
-            name='transaction_type',
+            name="transaction_type",
             type=str,
             location=OpenApiParameter.QUERY,
-            description='Filter transactions by type (e.g., DEPOSIT, WITHDRAW).',
+            description="Filter transactions by type (e.g., DEPOSIT, WITHDRAW).",
             required=False,
         ),
         OpenApiParameter(
-            name='amount',
+            name="amount",
             type=float,
             location=OpenApiParameter.QUERY,
-            description='Filter transactions by exact amount.',
+            description="Filter transactions by exact amount.",
             required=False,
         ),
         OpenApiParameter(
-            name='amount__gt',
+            name="amount__gt",
             type=float,
             location=OpenApiParameter.QUERY,
-            description='Filter transactions by amount greater than.',
+            description="Filter transactions by amount greater than.",
             required=False,
         ),
         OpenApiParameter(
-            name='amount__lt',
+            name="amount__lt",
             type=float,
             location=OpenApiParameter.QUERY,
-            description='Filter transactions by amount less than.',
+            description="Filter transactions by amount less than.",
             required=False,
         ),
     ],
@@ -57,9 +61,9 @@ class TransactionHistoryFilter(filters.FilterSet):
     },
     examples=[
         OpenApiExample(
-            'List Transactions Example',
-            summary='Example of listing transactions',
-            description='This example shows how to retrieve a list of transactions for the authenticated user\'s accounts.',
+            "List Transactions Example",
+            summary="Example of listing transactions",
+            description="This example shows how to retrieve a list of transactions for the authenticated user's accounts.",
             value=[
                 {
                     "id": 1,
@@ -68,7 +72,7 @@ class TransactionHistoryFilter(filters.FilterSet):
                     "amount": "100.00",
                     "balance_after": "1100.00",
                     "transaction_detail": "Initial deposit",
-                    "transaction_method": "ATM"
+                    "transaction_method": "ATM",
                 },
                 {
                     "id": 2,
@@ -77,18 +81,19 @@ class TransactionHistoryFilter(filters.FilterSet):
                     "amount": "50.00",
                     "balance_after": "1050.00",
                     "transaction_detail": "Coffee",
-                    "transaction_method": "CARD"
-                }
+                    "transaction_method": "CARD",
+                },
             ],
             request_only=False,
             response_only=True,
         ),
-    ]
+    ],
 )
 class TransactionHistoryViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows transaction history to be viewed or edited.
     """
+
     serializer_class = TransactionHistorySerializer
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [filters.DjangoFilterBackend]
@@ -108,17 +113,17 @@ class TransactionHistoryViewSet(viewsets.ModelViewSet):
         # Note: This is a simplified example. In a real-world scenario,
         # you would want to handle this within a database transaction
         # to ensure data integrity.
-        account = serializer.validated_data['account']
-        amount = serializer.validated_data['amount']
-        transaction_type = serializer.validated_data['transaction_type']
+        account = serializer.validated_data["account"]
+        amount = serializer.validated_data["amount"]
+        transaction_type = serializer.validated_data["transaction_type"]
 
-        if transaction_type == 'DEPOSIT':
+        if transaction_type == "DEPOSIT":
             account.balance += amount
-        elif transaction_type == 'WITHDRAW':
+        elif transaction_type == "WITHDRAW":
             if account.balance < amount:
                 raise serializers.ValidationError("Insufficient funds.")
             account.balance -= amount
-        
+
         account.save()
         serializer.save(balance_after=account.balance)
 
@@ -133,35 +138,35 @@ class TransactionHistoryViewSet(viewsets.ModelViewSet):
         },
         examples=[
             OpenApiExample(
-                'Create Deposit Request',
-                summary='Example request for creating a deposit',
-                description='This example shows the data required to create a deposit transaction.',
+                "Create Deposit Request",
+                summary="Example request for creating a deposit",
+                description="This example shows the data required to create a deposit transaction.",
                 value={
                     "account": 1,
                     "transaction_type": "DEPOSIT",
                     "amount": "100.00",
                     "transaction_detail": "Salary",
-                    "transaction_method": "TRANSFER"
+                    "transaction_method": "TRANSFER",
                 },
                 request_only=True,
             ),
             OpenApiExample(
-                'Create Withdrawal Request',
-                summary='Example request for creating a withdrawal',
-                description='This example shows the data required to create a withdrawal transaction.',
+                "Create Withdrawal Request",
+                summary="Example request for creating a withdrawal",
+                description="This example shows the data required to create a withdrawal transaction.",
                 value={
                     "account": 1,
                     "transaction_type": "WITHDRAW",
                     "amount": "50.00",
                     "transaction_detail": "Groceries",
-                    "transaction_method": "CARD"
+                    "transaction_method": "CARD",
                 },
                 request_only=True,
             ),
             OpenApiExample(
-                'Create Transaction Response',
-                summary='Example response for creating a transaction',
-                description='This example shows the response after successfully creating a transaction.',
+                "Create Transaction Response",
+                summary="Example response for creating a transaction",
+                description="This example shows the response after successfully creating a transaction.",
                 value={
                     "id": 3,
                     "account": 1,
@@ -169,11 +174,11 @@ class TransactionHistoryViewSet(viewsets.ModelViewSet):
                     "amount": "100.00",
                     "balance_after": "1200.00",
                     "transaction_detail": "Salary",
-                    "transaction_method": "TRANSFER"
+                    "transaction_method": "TRANSFER",
                 },
                 response_only=True,
             ),
-        ]
+        ],
     )
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)

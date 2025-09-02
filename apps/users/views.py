@@ -1,8 +1,9 @@
 from django.conf import settings
+from django.contrib import auth  # Corrected import
 from django.contrib.auth import get_user_model
-from django.contrib import auth # Corrected import
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
+from django.shortcuts import redirect
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from rest_framework import status
@@ -11,10 +12,9 @@ from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.views import TokenRefreshView as SimpleJWTRefreshView # Added
-from django.shortcuts import redirect
 from rest_framework_simplejwt.serializers import TokenRefreshSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenRefreshView as SimpleJWTRefreshView  # Added
 
 from apps.users.serializers import (
     EmailVerificationSerializer,
@@ -124,14 +124,11 @@ class LogoutView(GenericAPIView):
         except Exception:
             return Response({"message": "유효하지 않은 토큰입니다."}, status=status.HTTP_400_BAD_REQUEST)
 
-        auth.logout(request) # Explicitly log out Django session
-        response = redirect('logged_out') # Redirect to dedicated logged out page after successful logout
+        auth.logout(request)  # Explicitly log out Django session
+        response = redirect("logged_out")  # Redirect to dedicated logged out page after successful logout
         response.delete_cookie("access_token")
         response.delete_cookie("refresh_token")
         return response
-
-
-
 
 
 class TokenRefreshView(SimpleJWTRefreshView):
@@ -141,7 +138,7 @@ class TokenRefreshView(SimpleJWTRefreshView):
             return Response({"detail": "Refresh token not found in cookies."}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = TokenRefreshSerializer(data={"refresh": refresh_token})
-        
+
         try:
             serializer.is_valid(raise_exception=True)
         except Exception as e:

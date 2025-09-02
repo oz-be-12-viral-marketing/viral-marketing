@@ -1,17 +1,19 @@
-from rest_framework import viewsets, permissions
+from drf_spectacular.utils import OpenApiExample, OpenApiParameter, extend_schema
+from rest_framework import status  # Import status for examples
+from rest_framework import permissions, viewsets
+
 from .models import Account
 from .serializers import AccountSerializer
-from drf_spectacular.utils import extend_schema, OpenApiParameter, OpenApiExample
-from rest_framework import status # Import status for examples
+
 
 @extend_schema(
     description="API for managing user accounts. Provides CRUD operations for accounts associated with the authenticated user.",
     parameters=[
         OpenApiParameter(
-            name='user',
+            name="user",
             type=str,
             location=OpenApiParameter.QUERY,
-            description='Filter accounts by user ID (only accessible for authenticated user\'s own accounts).',
+            description="Filter accounts by user ID (only accessible for authenticated user's own accounts).",
             required=False,
         ),
     ],
@@ -22,9 +24,9 @@ from rest_framework import status # Import status for examples
     },
     examples=[
         OpenApiExample(
-            'List Accounts Example',
-            summary='Example of listing accounts',
-            description='This example shows how to retrieve a list of accounts for the authenticated user.',
+            "List Accounts Example",
+            summary="Example of listing accounts",
+            description="This example shows how to retrieve a list of accounts for the authenticated user.",
             value=[
                 {
                     "id": 1,
@@ -33,7 +35,7 @@ from rest_framework import status # Import status for examples
                     "bank_code": "004",
                     "account_type": "CHECKING",
                     "balance": "1000.00",
-                    "currency": "KR"
+                    "currency": "KR",
                 },
                 {
                     "id": 2,
@@ -42,18 +44,19 @@ from rest_framework import status # Import status for examples
                     "bank_code": "088",
                     "account_type": "SAVING",
                     "balance": "5000.00",
-                    "currency": "US"
-                }
+                    "currency": "US",
+                },
             ],
             request_only=False,
             response_only=True,
         ),
-    ]
+    ],
 )
 class AccountViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
+
     serializer_class = AccountSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -75,20 +78,16 @@ class AccountViewSet(viewsets.ModelViewSet):
         },
         examples=[
             OpenApiExample(
-                'Create Account Request',
-                summary='Example request for creating an account',
-                description='This example shows the data required to create a new account.',
-                value={
-                    "bank_code": "004",
-                    "account_type": "CHECKING",
-                    "currency": "KR"
-                },
+                "Create Account Request",
+                summary="Example request for creating an account",
+                description="This example shows the data required to create a new account.",
+                value={"bank_code": "004", "account_type": "CHECKING", "currency": "KR"},
                 request_only=True,
             ),
             OpenApiExample(
-                'Create Account Response',
-                summary='Example response for creating an account',
-                description='This example shows the response after successfully creating an account.',
+                "Create Account Response",
+                summary="Example response for creating an account",
+                description="This example shows the response after successfully creating an account.",
                 value={
                     "id": 3,
                     "user": 1,
@@ -96,11 +95,11 @@ class AccountViewSet(viewsets.ModelViewSet):
                     "bank_code": "004",
                     "account_type": "CHECKING",
                     "balance": "0.00",
-                    "currency": "KR"
+                    "currency": "KR",
                 },
                 response_only=True,
             ),
-        ]
+        ],
     )
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
@@ -129,20 +128,16 @@ class AccountViewSet(viewsets.ModelViewSet):
         },
         examples=[
             OpenApiExample(
-                'Update Account Request',
-                summary='Example request for updating an account',
-                description='This example shows the data required to update an account.',
-                value={
-                    "bank_code": "088",
-                    "account_type": "SAVING",
-                    "currency": "US"
-                },
+                "Update Account Request",
+                summary="Example request for updating an account",
+                description="This example shows the data required to update an account.",
+                value={"bank_code": "088", "account_type": "SAVING", "currency": "US"},
                 request_only=True,
             ),
             OpenApiExample(
-                'Update Account Response',
-                summary='Example response for updating an account',
-                description='This example shows the response after successfully updating an account.',
+                "Update Account Response",
+                summary="Example response for updating an account",
+                description="This example shows the response after successfully updating an account.",
                 value={
                     "id": 1,
                     "user": 1,
@@ -150,11 +145,11 @@ class AccountViewSet(viewsets.ModelViewSet):
                     "bank_code": "088",
                     "account_type": "SAVING",
                     "balance": "1000.00",
-                    "currency": "US"
+                    "currency": "US",
                 },
                 response_only=True,
             ),
-        ]
+        ],
     )
     def update(self, request, *args, **kwargs):
         return super().update(request, *args, **kwargs)
@@ -171,18 +166,16 @@ class AccountViewSet(viewsets.ModelViewSet):
         },
         examples=[
             OpenApiExample(
-                'Partial Update Account Request',
-                summary='Example request for partially updating an account',
-                description='This example shows the data required to partially update an account.',
-                value={
-                    "currency": "JP"
-                },
+                "Partial Update Account Request",
+                summary="Example request for partially updating an account",
+                description="This example shows the data required to partially update an account.",
+                value={"currency": "JP"},
                 request_only=True,
             ),
             OpenApiExample(
-                'Partial Update Account Response',
-                summary='Example response for partially updating an account',
-                description='This example shows the response after successfully partially updating an account.',
+                "Partial Update Account Response",
+                summary="Example response for partially updating an account",
+                description="This example shows the response after successfully partially updating an account.",
                 value={
                     "id": 1,
                     "user": 1,
@@ -190,11 +183,11 @@ class AccountViewSet(viewsets.ModelViewSet):
                     "bank_code": "004",
                     "account_type": "CHECKING",
                     "balance": "1000.00",
-                    "currency": "JP"
+                    "currency": "JP",
                 },
                 response_only=True,
             ),
-        ]
+        ],
     )
     def partial_update(self, request, *args, **kwargs):
         return super().partial_update(request, *args, **kwargs)

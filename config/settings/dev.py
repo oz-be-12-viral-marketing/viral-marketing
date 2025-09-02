@@ -1,12 +1,14 @@
 # config/settings/dev.py
 # 개발 환경용 설정
 import os
-import sys # Added for conditional debug_toolbar loading
+import sys  # Added for conditional debug_toolbar loading
+
 from .base import *  # noqa: F403
+from .base import MIDDLEWARE  # MIDDLEWARE를 명시적으로 가져오기
 
 DEBUG = True
 
-SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-development-key") # Load from env var
+SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-development-key")  # Load from env var
 
 ALLOWED_HOSTS = ["*"]
 
@@ -24,11 +26,11 @@ DATABASES = {
 }
 
 # Debug Toolbar settings for development
-INTERNAL_IPS = ["127.0.0.1"] # Standard for local development
+INTERNAL_IPS = ["127.0.0.1"]  # Standard for local development
 DEBUG_TOOLBAR_CONFIG = {
-    "IS_RUNNING_TESTS": False, # Disable check during tests
+    "IS_RUNNING_TESTS": False,  # Disable check during tests
 }
 
 # Add Debug Toolbar middleware directly in dev.py
-if 'test' not in sys.argv:
-    MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')
+if "test" not in sys.argv:
+    MIDDLEWARE.insert(0, "debug_toolbar.middleware.DebugToolbarMiddleware")

@@ -8,32 +8,38 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('analysis', '0003_remove_spendingreport_image_path_and_more'),
+        ("analysis", "0003_remove_spendingreport_image_path_and_more"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='spendingreport',
-            options={'ordering': ['-user', '-generated_date', '-created_at']},
+            name="spendingreport",
+            options={"ordering": ["-user", "-generated_date", "-created_at"]},
         ),
         migrations.AlterUniqueTogether(
-            name='spendingreport',
+            name="spendingreport",
             unique_together=set(),
         ),
         migrations.AddField(
-            model_name='spendingreport',
-            name='user',
-            field=models.ForeignKey(default=1, help_text='The user this report belongs to.', on_delete=django.db.models.deletion.CASCADE, related_name='spending_reports', to=settings.AUTH_USER_MODEL),
+            model_name="spendingreport",
+            name="user",
+            field=models.ForeignKey(
+                default=1,
+                help_text="The user this report belongs to.",
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="spending_reports",
+                to=settings.AUTH_USER_MODEL,
+            ),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='spendingreport',
-            name='json_data',
-            field=models.JSONField(default=dict, help_text='Report data in JSON format.'),
+            model_name="spendingreport",
+            name="json_data",
+            field=models.JSONField(default=dict, help_text="Report data in JSON format."),
         ),
         migrations.AlterUniqueTogether(
-            name='spendingreport',
-            unique_together={('user', 'report_type', 'generated_date')},
+            name="spendingreport",
+            unique_together={("user", "report_type", "generated_date")},
         ),
     ]

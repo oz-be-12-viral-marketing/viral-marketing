@@ -1,4 +1,5 @@
 from django.apps import AppConfig
+
 from config.settings.base import BASE_DIR
 
 

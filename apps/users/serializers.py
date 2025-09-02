@@ -40,7 +40,7 @@ class LoginSerializer(serializers.Serializer):
             raise serializers.ValidationError("이메일과 비밀번호를 모두 입력해주세요.")
 
         # Try to authenticate the user
-        user = authenticate(request=self.context.get('request'), username=email, password=password)
+        user = authenticate(request=self.context.get("request"), username=email, password=password)
 
         if user is None:
             # Check if user exists but is inactive
@@ -49,10 +49,10 @@ class LoginSerializer(serializers.Serializer):
                 if not user_obj.is_active:
                     raise serializers.ValidationError("비활성화된 계정입니다.")
             except get_user_model().DoesNotExist:
-                pass # User does not exist, so it's an invalid credential
+                pass  # User does not exist, so it's an invalid credential
 
             raise serializers.ValidationError("이메일 또는 비밀번호가 올바르지 않습니다.")
-        
+
         attrs["user"] = user
         return attrs
 
@@ -68,12 +68,12 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = ["email"]
 
     def update(self, instance, validated_data):
-        instance.name = validated_data.get('name', instance.name)
-        instance.nickname = validated_data.get('nickname', instance.nickname)
+        instance.name = validated_data.get("name", instance.name)
+        instance.nickname = validated_data.get("nickname", instance.nickname)
 
         # Handle unique, nullable field to avoid IntegrityError with empty strings
-        phone_number = validated_data.get('phone_number', instance.phone_number)
-        if phone_number == '':
+        phone_number = validated_data.get("phone_number", instance.phone_number)
+        if phone_number == "":
             instance.phone_number = None
         else:
             instance.phone_number = phone_number
