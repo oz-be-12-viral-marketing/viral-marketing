@@ -22,8 +22,12 @@ DATABASES = {
     }
 }
 
-# Debug Toolbar 강제 활성화 설정
-INTERNAL_IPS = ["0.0.0.0"] # 모든 IP에서 툴바 표시 (개발용)
+# Debug Toolbar settings for development
+INTERNAL_IPS = ["127.0.0.1", "0.0.0.0"] # Broad IP range for development
 DEBUG_TOOLBAR_CONFIG = {
-    "SHOW_TOOLBAR_CALLBACK": lambda request: True,
+    "SHOW_TOOLBAR_CALLBACK": lambda request: True, # Force show for debugging
+    "IS_RUNNING_TESTS": False, # Disable check during tests
 }
+
+# Add Debug Toolbar middleware directly in dev.py
+MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']

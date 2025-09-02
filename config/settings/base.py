@@ -61,7 +61,8 @@ THIRD_PARTY_APPS = [
     "allauth.socialaccount.providers.google",
     "allauth.socialaccount.providers.naver",
     "allauth.socialaccount.providers.kakao",
-    "django_celery_beat", # Added
+    "django_celery_beat",
+    "debug_toolbar", # Moved from conditional block
 ]
 
 # Application definition
@@ -78,12 +79,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-
-# Conditionally add development-only apps and middleware
-if DEBUG:
-    INSTALLED_APPS.append("debug_toolbar")
-    MIDDLEWARE.insert(0, "debug_toolbar.middleware.DebugToolbarMiddleware")
-    INTERNAL_IPS = ["127.0.0.1", "0.0.0.0"]
 
 
 AUTHENTICATION_BACKENDS = (
