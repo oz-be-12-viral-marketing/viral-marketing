@@ -1,6 +1,5 @@
 from django.contrib.auth import authenticate, get_user_model
 from rest_framework import serializers
-from allauth.account.auth_backends import AuthenticationBackend # Added import
 
 User = get_user_model()
 

@@ -6,7 +6,6 @@ from django.core.paginator import Paginator
 from django.db.models import Sum, OuterRef, Subquery
 from django.db.models.functions import ExtractMonth
 from datetime import datetime, timezone
-import os # Added for MEDIA_ROOT path joining
 
 from apps.accounts.models import Account
 from apps.transaction_history.models import TransactionHistory
@@ -15,7 +14,6 @@ from apps.transaction_history.filters import TransactionFilter
 from apps.analysis.filters import AnalysisFilter
 from apps.analysis.forms import SentimentAnalysisEditForm
 from .forms import AccountForm, TransactionForm, LoginForm
-from django.conf import settings # Added for MEDIA_ROOT
 
 
 def login_page_view(request):

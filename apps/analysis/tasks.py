@@ -1,10 +1,9 @@
 from datetime import timedelta, date, datetime
 import logging
-from typing import Dict, Any, List
+from typing import Dict, Any
 from django.utils import timezone
 from celery import shared_task
 from django.db.models import Sum, Case, When, Value, F, CharField
-from django.db.models.functions import TruncDate
 
 from apps.transaction_history.models import TransactionHistory
 from apps.transaction_history.choices import TransactionCategory # New import
