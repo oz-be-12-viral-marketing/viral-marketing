@@ -1,6 +1,7 @@
 # config/settings/dev.py
 # 개발 환경용 설정
 import os
+import sys # Added for conditional debug_toolbar loading
 from .base import *  # noqa: F403
 
 DEBUG = True
@@ -29,4 +30,5 @@ DEBUG_TOOLBAR_CONFIG = {
 }
 
 # Add Debug Toolbar middleware directly in dev.py
-MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')
+if 'test' not in sys.argv:
+    MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')

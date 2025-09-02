@@ -1,7 +1,6 @@
 # config/settings/base.py
 
 import os
-import sys # Added for conditional debug_toolbar loading
 from datetime import timedelta
 from celery.schedules import crontab
 from pathlib import Path
@@ -63,17 +62,15 @@ THIRD_PARTY_APPS = [
     "allauth.socialaccount.providers.naver",
     "allauth.socialaccount.providers.kakao",
     "django_celery_beat",
+    "debug_toolbar", # Unconditionally included
 ]
-
-# Conditionally add debug_toolbar only if not running tests
-if 'test' not in sys.argv:
-    THIRD_PARTY_APPS.append("debug_toolbar")
 
 # Application definition
 
 INSTALLED_APPS = DJANGO_APPS + CUSTOM_APPS + THIRD_PARTY_APPS
 
 MIDDLEWARE = [
+    "debug_toolbar.middleware.DebugToolbarMiddleware", # Unconditionally included
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "allauth.account.middleware.AccountMiddleware",
@@ -83,10 +80,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-
-# Conditionally add debug_toolbar middleware only if not running tests
-if 'test' not in sys.argv:
-    MIDDLEWARE.insert(0, "debug_toolbar.middleware.DebugToolbarMiddleware")
 
 
 AUTHENTICATION_BACKENDS = (
