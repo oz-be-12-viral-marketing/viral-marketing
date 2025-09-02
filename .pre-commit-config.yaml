@@ -5,7 +5,7 @@ repos:
       - id: ruff
         args:
           - --fix
-          - --extend-ignore=E501,F403,F401  # 줄 길이 제한, wildcard import, unused import 무시
+          - --extend-ignore=E501,F403  # 줄 길이 제한, wildcard import 무시
           - --line-length=120
           - --exclude=migrations,venv
           - --select=F,E,W  # 코드 스타일 및 오류 체크만
@@ -27,7 +27,7 @@ repos:
     rev: 7.3.0
     hooks:
       - id: flake8
-        args: [--max-line-length=120, "--ignore=F401,F403,F405"]
+        args: [--max-line-length=120, "--ignore=F401,F403,F405,E501"]
 
   - repo: https://github.com/myint/autoflake
     rev: v2.3.1

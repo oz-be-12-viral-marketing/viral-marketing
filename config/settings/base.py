@@ -2,8 +2,9 @@
 
 import os
 from datetime import timedelta
-from celery.schedules import crontab
 from pathlib import Path
+
+from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -19,7 +20,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-default-key-for-dev")
 # It's a best practice to control DEBUG mode via an environment variable.
 # The default is 'True' for easy local development.
 # In production, set DJANGO_DEBUG=False as an environment variable.
-DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
+DEBUG = os.environ.get("DJANGO_DEBUG", "True") == "True"
 
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
@@ -62,7 +63,7 @@ THIRD_PARTY_APPS = [
     "allauth.socialaccount.providers.naver",
     "allauth.socialaccount.providers.kakao",
     "django_celery_beat",
-    "debug_toolbar", # Unconditionally included
+    "debug_toolbar",  # Unconditionally included
 ]
 
 # Application definition
@@ -146,7 +147,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASES = {
     "default": {
-    "ENGINE": "django.db.backends.sqlite3",
+        "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
@@ -218,29 +219,29 @@ SIMPLE_JWT = {
 }
 
 # Celery Settings
-REDIS_HOST = os.environ.get('REDIS_HOST', 'localhost')
-REDIS_PORT = os.environ.get('REDIS_PORT', '6379')
-CELERY_BROKER_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}/0'
-CELERY_RESULT_BACKEND = f'redis://{REDIS_HOST}:{REDIS_PORT}/0' 
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'Asia/Seoul' # 한국 시간대로 설정
-CELERY_TASK_TRACK_STARTED = True # Task가 시작되었을 때 상태를 STARTED로 변경
-CELERY_TASK_TIME_LIMIT = 30 * 60 # 30분 이상 걸리는 Task는 강제 종료
-CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True # Celery worker 시작 시 브로커 연결 재시도
+REDIS_HOST = os.environ.get("REDIS_HOST", "localhost")
+REDIS_PORT = os.environ.get("REDIS_PORT", "6379")
+CELERY_BROKER_URL = f"redis://{REDIS_HOST}:{REDIS_PORT}/0"
+CELERY_RESULT_BACKEND = f"redis://{REDIS_HOST}:{REDIS_PORT}/0"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = "Asia/Seoul"  # 한국 시간대로 설정
+CELERY_TASK_TRACK_STARTED = True  # Task가 시작되었을 때 상태를 STARTED로 변경
+CELERY_TASK_TIME_LIMIT = 30 * 60  # 30분 이상 걸리는 Task는 강제 종료
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True  # Celery worker 시작 시 브로커 연결 재시도
 
 CELERY_BEAT_SCHEDULE = {
-    'generate-weekly-spending-report': {
-        'task': 'apps.analysis.tasks.schedule_all_user_reports',
-        'schedule': crontab(day_of_week='monday', hour=0, minute=0),  # 매주 월요일 00:00에 실행
-        'args': ('weekly',),
-        'options': {'expires': 300},
+    "generate-weekly-spending-report": {
+        "task": "apps.analysis.tasks.schedule_all_user_reports",
+        "schedule": crontab(day_of_week="monday", hour=0, minute=0),  # 매주 월요일 00:00에 실행
+        "args": ("weekly",),
+        "options": {"expires": 300},
     },
-    'generate-monthly-spending-report': {
-        'task': 'apps.analysis.tasks.schedule_all_user_reports',
-        'schedule': crontab(day_of_month='1', hour=0, minute=0),  # 매월 1일 00:00에 실행
-        'args': ('monthly',),
-        'options': {'expires': 300},
+    "generate-monthly-spending-report": {
+        "task": "apps.analysis.tasks.schedule_all_user_reports",
+        "schedule": crontab(day_of_month="1", hour=0, minute=0),  # 매월 1일 00:00에 실행
+        "args": ("monthly",),
+        "options": {"expires": 300},
     },
 }

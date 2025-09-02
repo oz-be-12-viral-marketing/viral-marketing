@@ -24,7 +24,10 @@ class UserAdmin(BaseUserAdmin):
     list_filter = ("is_staff", "is_active")
 
     # 읽기 전용 필드 (관리자 여부는 수정 불가)
-    readonly_fields = ("is_staff", "last_login",)
+    readonly_fields = (
+        "is_staff",
+        "last_login",
+    )
 
     # 필드 표시 순서 (어드민 페이지에서 표시될 필드들)
     fieldsets = (

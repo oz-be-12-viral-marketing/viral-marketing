@@ -1,7 +1,7 @@
 from django.db import models
 
 from apps.accounts.models import Account
-from apps.transaction_history.choices import TransactionMethod, TransactionType, TransactionCategory
+from apps.transaction_history.choices import TransactionCategory, TransactionMethod, TransactionType
 
 
 # Create your models here.

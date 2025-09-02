@@ -18,11 +18,11 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import include, path
 from django.contrib.auth.views import LogoutView as DjangoLogoutView
+from django.urls import include, path
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
-from apps.users.views import EmailVerificationView, LoginView, UserDetailView, TokenRefreshView
+from apps.users.views import EmailVerificationView, LoginView, TokenRefreshView, UserDetailView
 
 urlpatterns = [
     path("api/v1/users/login/", LoginView.as_view(), name="api_login"),
@@ -33,9 +33,9 @@ urlpatterns = [
     path("redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
     path("accounts/", include("allauth.urls")),
     path("activate/<uidb64>/<token>/", EmailVerificationView.as_view(), name="activate-user"),
-    path("users/logout/", DjangoLogoutView.as_view(next_page='logged_out'), name="logout"),
+    path("users/logout/", DjangoLogoutView.as_view(next_page="logged_out"), name="logout"),
     path("api/v1/users/me/", UserDetailView.as_view(), name="user-detail"),
-    path("users/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"), # Added
+    path("users/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),  # Added
     path("api/v1/", include("apps.accounts.urls")),
     path("api/v1/", include("apps.transaction_history.urls")),
     path("api/v1/analysis/", include("apps.analysis.urls")),
