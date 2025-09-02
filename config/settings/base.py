@@ -94,14 +94,12 @@ LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "/dashboard/"
 ACCOUNT_LOGOUT_REDIRECT_URL = "/"
 ACCOUNT_LOGIN_METHODS = ["email"]  # Use the modern, explicit setting
-ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
-ACCOUNT_USERNAME_REQUIRED = False  # Explicitly set to False
 ACCOUNT_EMAIL_VERIFICATION = "none"
 # Since we use a CustomSignupForm, allauth does not need to manage any signup fields itself.
 # The CustomSignupForm handles the fields for local registration.
-ACCOUNT_SIGNUP_FIELDS = []  # This prevents the critical error
+ACCOUNT_SIGNUP_FIELDS = ["email", "name", "nickname"]
 ACCOUNT_FORMS = {
     "signup": "apps.users.forms.CustomSignupForm",
 }
