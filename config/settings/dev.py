@@ -23,11 +23,10 @@ DATABASES = {
 }
 
 # Debug Toolbar settings for development
-INTERNAL_IPS = ["127.0.0.1", "0.0.0.0"] # Broad IP range for development
+INTERNAL_IPS = ["127.0.0.1"] # Standard for local development
 DEBUG_TOOLBAR_CONFIG = {
-    "SHOW_TOOLBAR_CALLBACK": lambda request: True, # Force show for debugging
     "IS_RUNNING_TESTS": False, # Disable check during tests
 }
 
 # Add Debug Toolbar middleware directly in dev.py
-MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
+MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware')

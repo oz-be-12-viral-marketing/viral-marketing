@@ -1,6 +1,7 @@
 # config/settings/base.py
 
 import os
+import sys # Added for conditional debug_toolbar loading
 from datetime import timedelta
 from celery.schedules import crontab
 from pathlib import Path
@@ -62,8 +63,11 @@ THIRD_PARTY_APPS = [
     "allauth.socialaccount.providers.naver",
     "allauth.socialaccount.providers.kakao",
     "django_celery_beat",
-    "debug_toolbar", # Moved from conditional block
 ]
+
+# Conditionally add debug_toolbar only if not running tests
+if 'test' not in sys.argv:
+    THIRD_PARTY_APPS.append("debug_toolbar")
 
 # Application definition
 
@@ -79,6 +83,10 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+# Conditionally add debug_toolbar middleware only if not running tests
+if 'test' not in sys.argv:
+    MIDDLEWARE.insert(0, "debug_toolbar.middleware.DebugToolbarMiddleware")
 
 
 AUTHENTICATION_BACKENDS = (
@@ -146,7 +154,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
+    "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
