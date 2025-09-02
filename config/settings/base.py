@@ -1,6 +1,7 @@
 # config/settings/base.py
 
 import os
+import sys # Added for conditional debug_toolbar loading
 from datetime import timedelta
 from celery.schedules import crontab
 from pathlib import Path
@@ -10,7 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
 # Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
+# See https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-default-key-for-dev")
@@ -70,7 +71,6 @@ THIRD_PARTY_APPS = [
 INSTALLED_APPS = DJANGO_APPS + CUSTOM_APPS + THIRD_PARTY_APPS
 
 MIDDLEWARE = [
-    "debug_toolbar.middleware.DebugToolbarMiddleware", # Unconditionally included
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "allauth.account.middleware.AccountMiddleware",
