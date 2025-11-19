@@ -1,94 +1,66 @@
-# viral-marketing
-viral marketing team project
-<img width="3840" height="3564" alt="Mermaid Chart - Create complex, visual diagrams with text  A smarter way of creating diagrams -2025-08-27-050052" src="https://github.com/user-attachments/assets/2ff215df-804d-4fd2-b10f-1a990a28e531" />
+## OZ 바이럴 마케팅 분석 (Django 기반) 프로젝트 개요
 
+이 문서는 Django 프레임워크를 사용하여 개발된 바이럴 마케팅 분석 플랫폼의 핵심 내용을 요약합니다. 본 프로젝트는 사용자의 소비 패턴을 분석하고, AI를 통해 생성된 마케팅 메시지를 제안하여 효과적인 마케팅 전략 수립을 지원하는 데 중점을 두었습니다.
 
----
+### 1. 주요 기능
 
-### 테이블 정의
+*   **사용자 관리**: 회원가입, 로그인, 로그아웃 및 사용자 인증 (소셜 로그인 포함).
+*   **소비 데이터 관리**: 사용자는 자신의 소비 내역(CSV/Excel)을 업로드하고 관리할 수 있습니다.
+*   **지출 분석**: 업로드된 소비 내역을 기반으로 카테고리별 지출을 분석하고 시각화 리포트를 생성합니다.
+*   **AI 기반 마케팅 메시지 생성**: 분석된 소비 패턴을 바탕으로, AI가 타겟 고객층에 맞는 바이럴 마케팅 메시지를 자동으로 생성하고 제안합니다.
+*   **비동기 처리**: 데이터 분석 및 AI 메시지 생성과 같이 시간이 많이 소요되는 작업은 Celery를 사용하여 비동기적으로 처리하여 사용자 경험을 향상시킵니다.
+*   **알림 기능**: 분석 리포트 생성 완료 등 주요 이벤트 발생 시 사용자에게 알림을 보냅니다.
+*   **API 기반 아키텍처**: Django REST Framework를 사용하여 백엔드 기능을 API로 제공함으로써, 향후 다양한 클라이언트(웹, 모바일 등)와의 확장성을 확보했습니다.
 
----
+### 2. 기술 스택
 
-### `users`
+*   **백엔드**:
+    *   Python
+    *   Django (웹 프레임워크)
+    *   Django REST Framework (API 개발)
+    *   Celery (비동기 작업 큐)
+    *   Redis (Celery 메시지 브로커)
+*   **데이터베이스**:
+    *   PostgreSQL (메인 데이터베이스)
+*   **프론트엔드**:
+    *   HTML5 (Django Template Engine)
+    *   CSS3, JavaScript (클라이언트 사이드 로직)
+*   **인프라 및 배포**:
+    *   Docker, Docker Compose (컨테이너화)
+    *   GitHub Actions (CI/CD 자동화)
 
-* **설명**: 서비스 사용자의 기본 정보를 저장
-* **필드**:
-    * `email` (VARCHAR, PK, **UNIQUE KEY**): 사용자 이메일 (기본키)
-    * `password` (VARCHAR): 해시된 비밀번호
-    * `nickname` (VARCHAR, UNIQUE KEY): 사용자 닉네임
-    * `name` (VARCHAR): 실명
-    * `phone_number` (VARCHAR, UNIQUE KEY): 전화번호
-    * `role` (VARCHAR, NOT NULL, DEFAULT 'user'): 사용자 역할 (`admin`, `staff`, `user` 등)
-    * `last_logged_in_at` (TIMESTAMP): 마지막 로그인 시각
-    * `is_active` (BOOLEAN, NOT NULL, DEFAULT TRUE): 계정 활성화 여부
-    * `created_at` (TIMESTAMP, NOT NULL, DEFAULT CURRENT_TIMESTAMP): 계정 생성 시각
-    * `deleted_at` (TIMESTAMP): 소프트 삭제 시각 (삭제된 경우)
+### 3. 프로젝트 구조
 
-### `accounts`
+```
+viral-marketing-analysis/
+├── apps/                     # Django 애플리케이션들을 모아놓은 디렉터리
+│   ├── accounts/             # 사용자 계정 관련 기능
+│   ├── analysis/             # 소비 데이터 분석 및 리포팅 기능
+│   ├── frontend/             # 사용자 인터페이스(View, Form) 처리
+│   ├── notifications/        # 알림 기능
+│   ├── transaction_history/  # 소비 내역 데이터 관리
+│   └── users/                # 사용자 모델 및 관리 기능
+├── config/                   # 프로젝트 설정 디렉터리
+│   ├── settings/             # base, dev, prod 환경별 설정 분리
+│   ├── asgi.py               # ASGI 서버 설정
+│   ├── celery.py             # Celery 설정
+│   └── urls.py               # 최상위 URL 라우팅
+├── core/                     # 여러 앱에서 공통으로 사용하는 핵심 기능
+├── static/                   # 정적 파일 (CSS, JavaScript, 이미지)
+├── templates/                # HTML 템플릿 파일
+├── docker-compose.dev.yml    # 개발 환경용 Docker Compose 설정
+├── Dockerfile                # Django 애플리케이션 Docker 이미지 빌드 파일
+└── requirements.txt          # Python 종속성 목록
+```
 
-* **설명**: 사용자의 계좌 정보를 저장
-* **필드**:
-    * `account_id` (VARCHAR, PK): 계좌 고유 식별자 (기본키)
-    * `user_id` (VARCHAR, FK): 사용자 ID (users 테이블의 email 필드 참조)
-    * `account_number` (VARCHAR, UNIQUE KEY): 계좌번호
-    * `bank_code` (VARCHAR): 은행 코드 (예: `004` - 국민은행)
-    * `account_type` (VARCHAR): 계좌 종류 (`checking`, `savings` 등)
-    * `balance` (DECIMAL(19, 4)): 계좌 잔액
-    * `currency` (VARCHAR, NOT NULL, DEFAULT 'KRW'): 화폐 단위
+### 4. 핵심 기능 흐름
 
----
+#### 4.1. 사용자 기능 흐름 (예: 소비 분석 및 마케팅 제안)
 
-### `transaction_history`
-
-* **설명**: 계좌 거래 내역을 저장
-* **필드**:
-    * `transaction_id` (VARCHAR, PK): 거래 내역 고유 식별자
-    * `account_id` (VARCHAR, FK): 계좌 ID (accounts 테이블의 account_id 필드 참조)
-    * `transaction_type` (VARCHAR, NOT NULL): 거래 종류 (`deposit`, `withdrawal`, `transfer`)
-    * `amount` (DECIMAL(19, 4), NOT NULL): 거래 금액
-    * `balance_after` (DECIMAL(19, 4), NOT NULL): 거래 후 잔액
-    * `memo` (VARCHAR): 거래 메모
-    * `transaction_time` (TIMESTAMP, NOT NULL, DEFAULT CURRENT_TIMESTAMP): 거래 발생 시각
-
----
-
-### `notifications`
-
-* **설명**: 사용자에게 발송되는 알림 정보를 저장
-* **필드**:
-    * `notification_id` (VARCHAR, PK): 알림 고유 식별자
-    * `user_id` (VARCHAR, FK): 사용자 ID (users 테이블의 email 필드 참조)
-    * `message_content` (VARCHAR, NOT NULL): 알림 내용
-    * `is_read` (BOOLEAN, NOT NULL, DEFAULT FALSE): 알림 확인 여부
-    * `created_at` (TIMESTAMP, NOT NULL, DEFAULT CURRENT_TIMESTAMP): 알림 생성 시각
-
----
-
-### `analysis`
-
-* **설명**: 사용자별 분석 데이터를 저장
-* **필드**:
-    * `analysis_id` (VARCHAR, PK): 분석 데이터 고유 식별자
-    * `user_id` (VARCHAR, FK): 사용자 ID (users 테이블의 email 필드 참조)
-    * `type` (VARCHAR): 분석 종류 (`monthly_report`, `spending_analysis` 등)
-    * `period` (VARCHAR): 분석 기간
-    * `start_date` (DATE): 분석 시작일
-    * `end_date` (DATE): 분석 종료일
-    * `description` (VARCHAR): 분석 결과 요약
-    * `result_image_url` (VARCHAR): 분석 결과 이미지 URL
-    * `created_at` (TIMESTAMP, NOT NULL, DEFAULT CURRENT_TIMESTAMP): 분석 생성 시각
-    * `updated_at` (TIMESTAMP): 분석 업데이트 시각
-
-### 관계 (Relationships)
-
-* `users`와 `accounts`: **1:N** (한 명의 사용자가 여러 계정을 보유)
-* `accounts`와 `transaction_history`: **1:N** (한 계정에 여러 거래 내역)
-* `users`와 `notifications`: **1:N** (한 명의 사용자가 여러 알림을 수신
-* `users`와 `analysis`: **1:N** (한 명의 사용자에 대해 여러 분석 데이터를 생성)
-
-`DECIMAL` 타입의 정밀도를 명시(`DECIMAL(19, 4)`)하고, 화폐 단위를 추가하여 재무 관련 데이터의 정확도 향상. 또한, 역할 필드를 통합(`role`), 시간 필드명을 더 직관적으로 변경(`last_logged_in_at`), 소프트 삭제를 위한 필드(`deleted_at`)를 추가.
-
-
-# CI Test
-=======
-
+1.  **회원가입/로그인**: 사용자는 웹사이트를 통해 회원가입하거나 로그인합니다.
+2.  **소비 내역 업로드**: 사용자는 '소비 내역 분석' 페이지(`transaction_analysis_form.html`)에서 자신의 소비 내역이 담긴 CSV 또는 Excel 파일을 업로드합니다.
+3.  **분석 요청 (비동기 처리)**: 파일이 업로드되면, 백엔드는 Celery 워커에게 데이터 분석 작업을 비동기적으로 요청합니다. 사용자는 작업이 처리되는 동안 다른 기능을 계속 사용할 수 있습니다.
+4.  **분석 및 AI 메시지 생성**:
+    *   Celery 워커는 업로드된 데이터를 분석하여 카테고리별 지출 통계를 계산합니다.
+    *   분석된 결과를 바탕으로 AI 모델을 호출하여, 해당 소비 패턴을 가진 고객에게 가장 효과적일 것으로 예상되는 마케팅 메시지를 생성합니다.
+5.  **결과 확인 및 알림**: 분석 및 메시지 생성이 완료되면 사용자에게 알림이 전송됩니다. 사용자는 '분석 내역' 페이지(`analysis_history.html`)에서 생성된 지출 리포트와 AI가 제안한 마케팅 메시지를 확인할 수 있습니다.
