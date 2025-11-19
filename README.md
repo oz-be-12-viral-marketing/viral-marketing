@@ -1,3 +1,13 @@
+![1](https://github.com/user-attachments/assets/cc4d5631-ce1d-47bb-b92f-ebe8bf5a9050)
+![2](https://github.com/user-attachments/assets/543b2706-1673-4855-9e0c-af7c0a8c73ad)
+![3](https://github.com/user-attachments/assets/d1721832-b4c0-4fc0-94ff-3cd97f6aa856)
+![4](https://github.com/user-attachments/assets/861e71cf-e3bc-4b58-b7a0-5b551f4ddd27)
+![5](https://github.com/user-attachments/assets/4f2c5606-a54b-4681-a2a2-aa8f98d9cf42)
+![6](https://github.com/user-attachments/assets/faeed021-40a2-4a94-a80f-b3a3f5a801e1)
+![7](https://github.com/user-attachments/assets/d5eab8d0-dc29-4b2a-b964-0ba724e3741c)
+![8](https://github.com/user-attachments/assets/47ba0d67-9220-456c-9ea4-378821108e2b)
+
+
 ## OZ 바이럴 마케팅 분석 (Django 기반) 프로젝트 개요
 
 이 문서는 Django 프레임워크를 사용하여 개발된 바이럴 마케팅 분석 플랫폼의 핵심 내용을 요약합니다. 본 프로젝트는 사용자의 소비 패턴을 분석하고, AI를 통해 생성된 마케팅 메시지를 제안하여 효과적인 마케팅 전략 수립을 지원하는 데 중점을 두었습니다.
